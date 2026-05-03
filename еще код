@@ -1,0 +1,231 @@
+#include<iostream>
+#include<string>
+#include<cstdlib>
+#include<ctime>
+
+using namespace std;
+
+struct Student {
+	string Fam;
+	string Name;
+	string Otch;
+	int Kurs;
+	double Sr_ball; 
+};
+
+template<typename example>
+void input(example& x, string msg) {
+	cout << msg;
+	cin >> x;
+}
+
+string generateFam() {
+	string Fam[] = { "Иванов", "Романов", "Александров", "Смирнов", "Киселев", "Гагарин", "Казаковцев", "Гаврилов", "Михайлов", "Сидоркин" };
+	return Fam[rand() % 10];
+}
+
+string generateName() {
+	string Name[] = { "Александр", "Михаил", "Максим", "Илья", "Юра", "Кирилл", "Даниил", "Тимур", "Ваня", "Коля" };
+	return Name[rand() % 10];
+}
+
+string generateOtch() {
+	string Otch[] = { "Алексеевич", "Александрович", "Максимович", "Иванович", "Михайлович", "Сергеевич", "Андреевич", "Артемович", "Никитич", "Ильич" };
+	return Otch[rand() % 10];
+}
+
+int generateKurs() {
+	return rand() % 5 + 1; 
+}
+
+double generateSr_ball() {
+	return 2.0 + (rand() % 31) / 10.0;
+}
+
+Student* createArray(int size) {
+	Student* x = new Student[size];
+	return x;
+}
+
+void generateRecord(Student& x) {
+	x.Fam = generateFam();
+	x.Name = generateName();
+	x.Otch = generateOtch();
+	x.Kurs = generateKurs();
+	x.Sr_ball = generateSr_ball();
+}
+
+void generateMass(Student* one, int startIndex, int newSize) {
+	for (int i = startIndex; i < startIndex + newSize; i++) {
+		generateRecord(one[i]);
+	}
+}
+
+void printRecord(Student x, int index) {
+	cout << index + 1 << ". " << x.Fam << " " << x.Name << " " << x.Otch
+		<< ", курс: " << x.Kurs << ", средний балл: " << x.Sr_ball << endl;
+}
+
+void printMass(Student* one, int size) {
+	if (size == 0) {
+		cout << "Нет записей о студентах!" << endl;
+		return;
+	}
+	cout << "\n=== СПИСОК СТУДЕНТОВ ===\n";
+	for (int i = 0; i < size; i++) {
+		printRecord(one[i], i);
+	}
+	cout << "==========================\n\n";
+}
+
+void Malodvoech(Student* one, int size) {
+	if (size == 0) {
+		cout << "Нет данных для анализа!" << endl;
+		return;
+	}
+
+	int losersCount[6] = { 0 }; 
+
+	for (int i = 0; i < size; i++) {
+		if (one[i].Sr_ball < 3.0) {
+			losersCount[one[i].Kurs]++;
+		}
+	}
+
+	cout << "\n=== СТАТИСТИКА ПО КУРСАМ ===\n";
+	bool hasLosers = false;
+	for (int kurs = 1; kurs <= 5; kurs++) {
+		cout << "Курс " << kurs << ": " << losersCount[kurs] << " двоечников" << endl;
+		if (losersCount[kurs] > 0) {
+			hasLosers = true;
+		}
+	}
+
+	if (!hasLosers) {
+		cout << "\nНа всех курсах нет двоечников!" << endl;
+		return;
+	}
+
+	int minLosers = -1;
+	int courseWithMinLosers = -1;
+
+	for (int kurs = 1; kurs <= 5; kurs++) {
+		if (losersCount[kurs] > 0) { 
+			if (minLosers == -1 || losersCount[kurs] < minLosers) {
+				minLosers = losersCount[kurs];
+				courseWithMinLosers = kurs;
+			}
+		}
+	}
+
+	if (courseWithMinLosers != -1) {
+		cout << "\n=== РЕЗУЛЬТАТ АНАЛИЗА ===\n";
+		cout << "Курс с наименьшим количеством двоечников: " << courseWithMinLosers << " курс" << endl;
+		cout << "Количество двоечников: " << minLosers << endl;
+		cout << "Другие курсы с таким же количеством двоечников: ";
+		bool hasOthers = false;
+		for (int kurs = 1; kurs <= 5; kurs++) {
+			if (kurs != courseWithMinLosers && losersCount[kurs] == minLosers && losersCount[kurs] > 0) {
+				cout << kurs << " ";
+				hasOthers = true;
+			}
+		}
+		if (!hasOthers) {
+			cout << "нет";
+		}
+		cout << endl;
+	}
+	else {
+		cout << "На всех курсах нет двоечников!" << endl;
+	}
+	cout << "==========================\n\n";
+}
+
+void deleteArray(Student*& x) {
+	delete[] x;
+	x = nullptr;
+}
+
+Student* resizeArray(Student* oldArray, int oldSize, int addSize) {
+	Student* newArray = createArray(oldSize + addSize);
+
+	for (int i = 0; i < oldSize; i++) {
+		newArray[i] = oldArray[i];
+	}
+
+	deleteArray(oldArray);
+
+	return newArray;
+}
+
+void Menu() {
+	Student* students = nullptr;
+	int currentSize = 0;
+	int choice;
+
+	do {
+		cout << "\n=== МЕНЮ ПРОГРАММЫ ===\n";
+		cout << "1. Добавить записи о студентах\n";
+		cout << "2. Вывести информацию о всех студентах\n";
+		cout << "3. Найти курс с наименьшим количеством двоечников\n";
+		cout << "0. Выход\n";
+		cout << "Ваш выбор: ";
+		input(choice, "");
+
+		switch (choice) {
+		case 1: {
+			int addSize;
+			input(addSize, "Введите количество записей для добавления: ");
+
+			if (addSize <= 0) {
+				cout << "Количество записей должно быть больше 0!" << endl;
+				break;
+			}
+
+			if (students == nullptr) {
+				students = createArray(addSize);
+				generateMass(students, 0, addSize);
+				currentSize = addSize;
+				cout << "Добавлено " << addSize << " записей!" << endl;
+			}
+			else {
+				Student* newStudents = resizeArray(students, currentSize, addSize);
+				students = newStudents;
+				generateMass(students, currentSize, addSize);
+				currentSize += addSize;
+				cout << "Добавлено еще " << addSize << " записей! Всего записей: " << currentSize << endl;
+			}
+			break;
+		}
+		case 2: {
+			printMass(students, currentSize);
+			break;
+		}
+		case 3: {
+			Malodvoech(students, currentSize);
+			break;
+		}
+		case 0: {
+			cout << "Выход из программы..." << endl;
+			break;
+		}
+		default: {
+			cout << "Неверный выбор! Попробуйте снова." << endl;
+			break;
+		}
+		}
+	} while (choice != 0);
+
+	if (students != nullptr) {
+		deleteArray(students);
+	}
+}
+
+int main() {
+	setlocale(LC_ALL, "Russian");
+	srand(time(0));
+
+	Menu();
+
+	return 0;
+}
