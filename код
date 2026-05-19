@@ -1,199 +1,98 @@
-#include<iostream>
-#include<string>
-#include<cstdlib>
-#include<ctime>
+#include <iostream>
+#include <fstream>
+#include <string>
+#include<locale>
 
 using namespace std;
 
-struct Tourist {
-	string Fam;
-	string Name;
-	string Otch;
-	string Gorod;
-};
-
-template<typename example>
-void input(example& x, string msg) {
-	cout << msg;
-	cin >> x;
-}
-
-string generateCity() {
-	string City[] = { "Москва", "Санкт-Петербург", "Казань", "Чебоксары", "Екатеринбург", "Нижний Новгород", "Йошкар-Ола", "Краснодар", "Владивосток", "Хабаровск" };
-	return City[rand() % 10];
-}
-
-string generateFam() {
-	string Fam[] = { "Иванов", "Романов", "Александров", "Смирнов", "Киселев", "Гагарин", "Казаковцев", "Гаврилов", "Михайлов", "Сидоркин" };
-	return Fam[rand() % 10];
-}
-
-string generateName() {
-	string Name[] = { "Александр", "Михаил", "Максим", "Илья", "Юра", "Кирилл", "Даниил", "Тимур", "Ваня", "Коля" };
-	return Name[rand() % 10];
-}
-
-string generateOtch() {
-	string Otch[] = { "Алексеевич", "Александрович", "Максимович", "Иванович", "Михайлович", "Сергеевич", "Андреевич", "Артемович", "Никитич", "Ильич" };
-	return Otch[rand() % 10];
-}
-
-Tourist* createArray(int size) {
-	Tourist* x = new Tourist[size];
-	return x;
-}
-
-void generateRecord(Tourist& x) {
-	x.Fam = generateFam();
-	x.Name = generateName();
-	x.Otch = generateOtch();
-	x.Gorod = generateCity();
-}
-
-void generateMass(Tourist* one, int startIndex, int newSize) {
-	for (int i = startIndex; i < startIndex + newSize; i++) {
-		generateRecord(one[i]);
-	}
-}
-
-void printRecord(Tourist x, int index) {
-	cout << index + 1 << ". " << x.Fam << " " << x.Name << " " << x.Otch << ", г. " << x.Gorod << endl;
-}
-
-void printMass(Tourist* one, int size) {
-	if (size == 0) {
-		cout << "Нет записей о туристах!" << endl;
-		return;
-	}
-	cout << "\n=== СПИСОК ТУРИСТОВ ===\n";
-	for (int i = 0; i < size; i++) {
-		printRecord(one[i], i);
-	}
-	cout << "=======================\n\n";
-}
-
-void findMostPopularCity(Tourist* one, int size) {
-	if (size == 0) {
-		cout << "Нет данных для анализа!" << endl;
-		return;
-	}
-
-	int maxCount = 0;
-	string mostPopularCity;
-
-	for (int i = 0; i < size; i++) {
-		int count = 1;
-		bool alreadyCounted = false;
-		for (int k = 0; k < i; k++) {
-			if (one[k].Gorod == one[i].Gorod) {
-				alreadyCounted = true;
-				break;
-			}
-		}
-		if (alreadyCounted) continue;
-
-		for (int j = i + 1; j < size; j++) {
-			if (one[j].Gorod == one[i].Gorod) {
-				count++;
-			}
-		}
-
-		if (count > maxCount) {
-			maxCount = count;
-			mostPopularCity = one[i].Gorod;
-		}
-	}
-
-	cout << "\n=== РЕЗУЛЬТАТ АНАЛИЗА ===\n";
-	cout << "Город, из которого больше всего туристов: " << mostPopularCity << endl;
-	cout << "Количество туристов: " << maxCount << endl;
-	cout << "==========================\n\n";
-}
-
-void deleteArray(Tourist*& x) {
-	delete[] x;
-	x = nullptr;
-}
-
-Tourist* resizeArray(Tourist* oldArray, int oldSize, int addSize) {
-	Tourist* newArray = createArray(oldSize + addSize);
-
-	for (int i = 0; i < oldSize; i++) {
-		newArray[i] = oldArray[i];
-	}
-
-	deleteArray(oldArray);
-
-	return newArray;
-}
-
-void Menu() {
-	Tourist* tourists = nullptr;
-	int currentSize = 0;
-	int choice;
-
-	do {
-		cout << "\n=== МЕНЮ ПРОГРАММЫ ===\n";
-		cout << "1. Добавить записи о туристах\n";
-		cout << "2. Вывести информацию о всех туристах\n";
-		cout << "3. Вывести город с наибольшим количеством туристов\n";
-		cout << "0. Выход\n";
-		cout << "Ваш выбор: ";
-		input(choice, "");
-
-		switch (choice) {
-		case 1: {
-			int addSize;
-			input(addSize, "Введите количество записей для добавления: ");
-
-			if (addSize <= 0) {
-				cout << "Количество записей должно быть положительным!" << endl;
-				break;
-			}
-
-			if (tourists == nullptr) {
-				tourists = createArray(addSize);
-				generateMass(tourists, 0, addSize);
-				currentSize = addSize;
-				cout << "Добавлено " << addSize << " записей!" << endl;
-			}
-			else {
-				Tourist* newTourists = resizeArray(tourists, currentSize, addSize);
-				tourists = newTourists;
-				generateMass(tourists, currentSize, addSize);
-				currentSize += addSize;
-				cout << "Добавлено еще " << addSize << " записей! Всего записей: " << currentSize << endl;
-			}
-			break;
-		}
-		case 2: {
-			printMass(tourists, currentSize);
-			break;
-		}
-		case 3: {
-			findMostPopularCity(tourists, currentSize);
-			break;
-		}
-		case 0: {
-			cout << "Выход из программы..." << endl;
-			break;
-		}
-		default: {
-			cout << "Неверный выбор! Попробуйте снова." << endl;
-			break;
-		}
-		}
-	} while (choice != 0);
-	if (tourists != nullptr) {
-		deleteArray(tourists);
-	}
-}
-
 int main() {
-	setlocale(LC_ALL, "Russian");
+    setlocale(LC_ALL, "RU");
 	srand(time(0));
+	string path = "D:\\99999\\";
+	string int_filename = path + "input.txt";
+	string out_filename = path + "output.txt";
 
-	Menu();
+	fstream f;
+    f.open(int_filename, ios_base::out);
+    for (int i = 0; i < 10; i++) {
+        for (int j = 0; j < 20; j++) {
+            int random = rand() % 100;
+            if (random < 30) {
+                int simfol = rand() % 3;
+                if (simfol == 0) f << "*";
+                else if (simfol == 1) f << "-";
+                else f << "+";
+                f << " ";
+            }
+        }
+        f << "\n";
+    }
+    f.close();
+cout << "file is created..." << endl;
+
+f.open(int_filename, ios_base::in);
+string content;
+string line;
+int starCount = 0;   
+int minusCount = 0; 
+int plusCount = 0;   
+
+while (getline(f, line)) {
+    content += line + "\n";
+
+    for (int i = 0; i < line.length(); i++) {
+        if (line[i] == '*') {
+            starCount++;
+        }
+        else if (line[i] == '-') {
+            minusCount++;
+        }
+        else if (line[i] == '+') {
+            plusCount++;
+        }
+    }
+}
+f.close();
+
+cout << "Содержимое исходного файла:" << endl;
+cout << content << endl;
+
+char popular = ' ';
+int maxCount = 0;
+
+if (starCount > maxCount) {
+    maxCount = starCount;
+    popular = '*';
+}
+if (minusCount > maxCount) {
+    maxCount = minusCount;
+    popular = '-';
+}
+if (plusCount > maxCount) {
+    maxCount = plusCount;
+    popular = '+';
+}
+string newContent = "";
+for (int i = 0; i < content.length(); i++) {
+    if (content[i] != popular) {
+        newContent += content[i];
+    }
+}
+content = newContent;
+
+f.open(out_filename, ios_base::out);
+f << content;
+f << "\n\"*\" - " << starCount << "; \"-\" - " << minusCount << "; \"+\" - " << plusCount;
+f.close();
+
+cout << "Статистика символов:" << endl;
+cout << "\"*\" - " << starCount << endl;
+cout << "\"-\" - " << minusCount << endl;
+cout << "\"+\" - " << plusCount << endl;
+
+if (maxCount <= 0) {
+    cout << "Ни один из символов (*, -, +) не найден в файле." << endl;
+}
 
 	return 0;
 }
