@@ -1,0 +1,187 @@
+#include <iostream>
+#include <ctime>
+
+using namespace std;
+
+template<typename T>
+void input(T& x, string msg) {
+    cout << msg;
+    cin >> x;
+}
+
+double generate_random_chisl() {
+    return (rand() % 20000 - 10000) / 100.0;
+}
+
+void vivod_spiska(double* L, int size) {
+    if (size == 0) {
+        cout << "Список пуст!" << endl;
+        return;
+    }
+
+    cout << "\n=== ТЕКУЩИЙ СПИСОК ===\n";
+    for (int i = 0; i < size; i++) {
+        cout << "L[" << i << "] = " << L[i] << endl;
+    }
+    cout << "Всего элементов: " << size << "\n";
+    cout << "========================\n\n";
+}
+
+void delet_max_element(double*& L, int& size) {
+    if (size == 0) {
+        cout << "Список пуст! Невозможно удалить максимальный элемент." << endl;
+        return;
+    }
+
+    int maxIndex = 0;
+    for (int i = 1; i < size; i++) {
+        if (L[i] > L[maxIndex]) {
+            maxIndex = i;
+        }
+    }
+
+    double maxValue = L[maxIndex];
+
+    double* newL = new double[size - 1];
+
+    for (int i = 0, j = 0; i < size; i++) {
+        if (i != maxIndex) {
+            newL[j++] = L[i];
+        }
+    }
+
+    delete[] L;
+    L = newL;
+    size--;
+
+    cout << "Максимальный элемент " << maxValue << " был удален!" << endl;
+}
+
+void New_elment(double*& L, int& size, int N) {
+    if (N <= 0) {
+        cout << "Количество элементов должно быть больше 0!" << endl;
+        return;
+    }
+
+    double* newL = new double[size + N];
+
+    for (int i = 0; i < size; i++) {
+        newL[i] = L[i];
+    }
+
+    for (int i = 0; i < N; i++) {
+        newL[size + i] = generate_random_chisl();
+    }
+
+    delete[] L;
+    L = newL;
+    size += N;
+
+    cout << "Добавлено " << N << " новых элементов! Всего элементов: " << size << endl;
+}
+
+void deleteArray(double*& L) {
+    delete[] L;
+    L = nullptr;
+}
+
+void Menu() {
+    double* L = nullptr;
+    int size = 0;
+    int choice;
+    bool first_sgen_element = false;
+
+    do {
+        cout << "\n========== МЕНЮ ПРОГРАММЫ ==========\n";
+        cout << "1. Сгенерировать первый элемент списка\n";
+        cout << "2. Добавить N новых элементов в список\n";
+        cout << "3. Вывести список на экран\n";
+        cout << "4. Изменить список согласно заданию (удалить максимальный элемент)\n";
+        cout << "0. Выход\n";
+        cout << "=====================================\n";
+        cout << "Ваш выбор: ";
+        input(choice, "");
+
+        switch (choice) {
+        case 1: {
+            if (first_sgen_element) {
+                cout << "Первый элемент уже сгенерирован! Используйте пункт 2 для добавления элементов." << endl;
+                break;
+            }
+
+            if (L != nullptr) {
+                deleteArray(L);
+                size = 0;
+            }
+
+            L = new double[1];
+            L[0] = generate_random_chisl();
+            size = 1;
+            first_sgen_element = true;
+
+            cout << "Сгенерирован первый элемент: " << L[0] << endl;
+            break;
+        }
+        case 2: {
+            if (!first_sgen_element) {
+                cout << "Сначала необходимо сгенерировать первый элемент (пункт 1)!" << endl;
+                break;
+            }
+
+            int N;
+            input(N, "Введите количество элементов для добавления: ");
+            New_elment(L, size, N);
+            break;
+        }
+        case 3: {
+            if (!first_sgen_element) {
+                cout << "Список пуст! Сначала сгенерируйте первый элемент (пункт 1)." << endl;
+                break;
+            }
+            vivod_spiska(L, size);
+            break;
+        }
+        case 4: {
+            if (!first_sgen_element) {
+                cout << "Список пуст! Сначала сгенерируйте первый элемент (пункт 1)." << endl;
+                break;
+            }
+
+            if (size == 0) {
+                cout << "Список пуст! Невозможно удалить максимальный элемент." << endl;
+                break;
+            }
+
+            cout << "\nТекущий список перед удалением максимального элемента:" << endl;
+            vivod_spiska(L, size);
+
+            delet_max_element(L, size);
+
+            cout << "\nСписок после удаления максимального элемента:" << endl;
+            vivod_spiska(L, size);
+            break;
+        }
+        case 0: {
+            cout << "Выход из программы..." << endl;
+            break;
+        }
+        default: {
+            cout << "Неверный выбор! Пожалуйста, выберите пункт от 0 до 4." << endl;
+            break;
+        }
+        }
+    } while (choice != 0);
+
+    if (L != nullptr) {
+        deleteArray(L);
+    }
+}
+
+int main() {
+    setlocale(LC_ALL, "Russian");
+    srand(time(0));
+
+    Menu();
+
+    return 0;
+}
