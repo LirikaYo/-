@@ -37,7 +37,7 @@ string generateOtch() {
 }
 
 string generateWorkshop() {
-    string workshops[] = { "Workshop No.1", "Workshop No.2", "Workshop No.3", "Assembly shop", "Machine shop" };
+    string workshops[] = { "Цех №1", "Цех №2", "Цех №3", "Цех №4", "Цех №5" };
     return workshops[rand() % 5];
 }
 
@@ -63,7 +63,7 @@ void printRecord(Worker w, int index) {
         << ", Категория: " << w.category << endl;
 }
 
-void vivodAllWorkers(Worker* workers, int size) {
+void vivod_all_workers(Worker* workers, int size) {
     if (size == 0) {
         cout << "Нет записей о рабочих!" << endl;
         return;
@@ -81,60 +81,60 @@ void deleteRecord(Worker*& workers, int& size, int index) {
         return;
     }
 
-    Worker* newWorkers = new Worker[size - 1];
+    Worker* new_workers = new Worker[size - 1];
     for (int i = 0, j = 0; i < size; i++) {
         if (i != index) {
-            newWorkers[j++] = workers[i];
+            new_workers[j++] = workers[i];
         }
     }
 
     delete[] workers;
-    workers = newWorkers;
+    workers = new_workers;
     size--;
     cout << "Запись успешно удалена!" << endl;
 }
 
-void searchByFam(Worker* workers, int size, string searchFam) {
+void search_by_fam(Worker* workers, int size, string search_fam) {
     bool found = false;
-    cout << "\n=== РЕЗУЛЬТАТЫ ПОИСКА (фамилия: " << searchFam << ") ===\n";
+    cout << "\n=== РЕЗУЛЬТАТЫ ПОИСКА (фамилия: " << search_fam << ") ===\n";
     for (int i = 0; i < size; i++) {
-        if (workers[i].Fam == searchFam) {
+        if (workers[i].Fam == search_fam) {
             printRecord(workers[i], i);
             found = true;
         }
     }
     if (!found) {
-        cout << "Рабочие с фамилией \"" << searchFam << "\" не найдены." << endl;
+        cout << "Рабочие с фамилией \"" << search_fam << "\" не найдены." << endl;
     }
     cout << "============================================\n\n";
 }
 
-void sortWorkers(Worker* workers, int size, int fieldChoice) {
+void sort_workers(Worker* workers, int size, int fieldChoice) {
     if (size <= 1) return;
 
     for (int i = 0; i < size - 1; i++) {
         for (int j = 0; j < size - i - 1; j++) {
-            bool needSwap = false;
+            bool need_swap = false;
 
             switch (fieldChoice) {
             case 1: 
-                if (workers[j].Fam > workers[j + 1].Fam) needSwap = true;
+                if (workers[j].Fam > workers[j + 1].Fam) need_swap = true;
                 break;
             case 2: 
-                if (workers[j].quantity > workers[j + 1].quantity) needSwap = true;
+                if (workers[j].quantity > workers[j + 1].quantity) need_swap = true;
                 break;
             case 3: 
-                if (workers[j].category > workers[j + 1].category) needSwap = true;
+                if (workers[j].category > workers[j + 1].category) need_swap = true;
                 break;
             case 4: 
-                if (workers[j].workshop > workers[j + 1].workshop) needSwap = true;
+                if (workers[j].workshop > workers[j + 1].workshop) need_swap = true;
                 break;
             default:
                 cout << "Неверный выбор поля для сортировки!" << endl;
                 return;
             }
 
-            if (needSwap) {
+            if (need_swap) {
                 swap(workers[j], workers[j + 1]);
             }
         }
@@ -173,24 +173,24 @@ void Menu() {
                 break;
             }
 
-            Worker* newWorkers = new Worker[currentSize + addSize];
+            Worker* new_workers = new Worker[currentSize + addSize];
 
             for (int i = 0; i < currentSize; i++) {
-                newWorkers[i] = workers[i];
+                new_workers[i] = workers[i];
             }
 
             for (int i = 0; i < addSize; i++) {
-                generateRecord(newWorkers[currentSize + i]);
+                generateRecord(new_workers[currentSize + i]);
             }
 
             delete[] workers;
-            workers = newWorkers;
+            workers = new_workers;
             currentSize += addSize;
             cout << "Добавлено " << addSize << " записей! Всего: " << currentSize << endl;
             break;
         }
         case 2: {
-            vivodAllWorkers(workers, currentSize);
+            vivod_all_workers(workers, currentSize);
             break;
         }
         case 3: {
@@ -199,7 +199,7 @@ void Menu() {
                 break;
             }
             int index;
-            vivodAllWorkers(workers, currentSize);
+            vivod_all_workers(workers, currentSize);
             input(index, "Введите номер записи для удаления (1-" + to_string(currentSize) + "): ");
             deleteRecord(workers, currentSize, index - 1);
             break;
@@ -211,7 +211,7 @@ void Menu() {
             }
             string searchName;
             input(searchName, "Введите фамилию для поиска: ");
-            searchByFam(workers, currentSize, searchName);
+            search_by_fam(workers, currentSize, searchName);
             break;
         }
         case 5: {
@@ -227,9 +227,9 @@ void Menu() {
             cout << "4. По цеху\n";
             cout << "Ваш выбор: ";
             input(fieldChoice, "");
-            sortWorkers(workers, currentSize, fieldChoice);
+            sort_workers(workers, currentSize, fieldChoice);
             cout << "Отсортированный список:\n";
-            vivodAllWorkers(workers, currentSize);
+            vivod_all_workers(workers, currentSize);
             break;
         }
         case 0: {
