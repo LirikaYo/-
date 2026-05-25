@@ -1,311 +1,258 @@
-#include <iostream> // Подключение библиотеки потокового ввода и вывода
-#include <conio.h> // Подключение библиотеки для работы с клавиатурой
-#include <ctime> // Подключение библиотеки для работы со временем
-#include <string> // Подключение библиотеки для работы со строками
-// Использование пространства имен std;
+#include <iostream>
+#include <fstream>
+#include <string>
+#include <ctime>
+#include <locale>
+
 using namespace std;
-// Объявление функции ввода данных
-template <typename example>
-void input(example& n, string s) {
-	cout << s;
-	cin >> n;
-}
-// Объявление функции вывода данных
-template <typename example>
-void output(example n, string s) {
-	cout << s << n << endl;
-}
-// Объявление структуры
-struct people {
-	int id;
-	string Fam;
-	string Name;
-	string Otch;
-	string Mail;
-	string WebPage;
-	string ICQnumber;
+
+struct Worker {
+    string Fam;
+    string Name;
+    string Otch; 
+    string workshop;   
+    int quantity;      
+    char category;    
 };
-// Объявление функции для генерирования одного человека
-people setOnePeople(int _id) {
-	people x;
-	const char* lname[] = { "Ivanov", "Petrov", "Sanych", "Vinogradov", "Alov" };
-	const char* name[] = { "Ivan", "Slava", "San", "Open", "Pol" };
-	const char* otch[] = { "Sergeevich", "Alexeevich", "Ruslanovich", "Ivanich", "Petrovich" };
-	const char* mail[] = { "lip.rus@mail.ru", "petrov0@gmail.com", "alov.1@yandex.ru", "ivanov.123@mail.ru", "ruslanov90@gmail.com" };
-	const char* webpage[] = { "https://elearing.marsu.ru", "https://google.com", "https://yandex.ru", "https://mail.ru", "http://mypage.com" };
-	const char* icqNumber[] = { "654346", "786446", "85634888", "124526", "9876554" };
-	x.id = _id;
-	x.Fam = lname[rand() % 5];
-	x.Name = name[rand() % 5];
-	x.Otch = otch[rand() % 5];
-	x.Mail = mail[rand() % 5];
-	x.WebPage = webpage[rand() % 5];
-	x.ICQnumber = icqNumber[rand() % 5];
-	return x;
-}
-// Объявление функции для заполнения массива людьми
-void setPeople(people* x, int count) {
-	for (int i = 0; i < count; i++) {
-		x[i] = setOnePeople(i);
-	}
-}
-// Объявление функции для вывода одного человека
-void printOnePeople(people& x) {
-	cout << x.id << " " << x.Fam << " " << x.Name << " " << x.Otch << " " << x.Mail << " " << x.WebPage << " " << x.ICQnumber << endl;
-}
-// Объявление функции для вывода всех людей
-void printPeople(people* x, int count) {
-	for (int i = 0; i < count; i++) {
-		printOnePeople(x[i]);
-	}
-}
-// Объявление функции для выделения памяти для массива
-people* newMassiv(int N) {
-	people* x = new people[N];
-	return x;
-}
-// Объявление функции для возврата памяти
-void deleteMassiv(people*& x) {
-	delete[]x;
-	x = nullptr;
+
+template<typename T>
+void input(T& x, string msg) {
+    cout << msg;
+    cin >> x;
 }
 
-// Объявление функции для добавления записей
-void addRecords(people*& x, int& N, int add) {
-	people* newX = newMassiv(N + add);
-	for (int i = 0; i < N; i++)
-		newX[i] = x[i];
-	for (int i = 0; i < add; i++)
-		newX[N + i] = setOnePeople(N + i);
-	deleteMassiv(x);
-	x = newX;
-	N += add;
+string generateFam() {
+    string Fam[] = { "Ivanov", "Petrov", "Sidorov", "Kuznetsov", "Sokolov", "Mikhailov", "Fedorov", "Morozov" };
+    return Fam[rand() % 8];
 }
 
-// Функция для удаления записей
-void deleteRecords(people*& x, int& N) {
-	deleteMassiv(x);
-	N = 0;
-	cout << "records deleted" << endl;
+string generateName() {
+    string Name[] = { "Alexey", "Dmitry", "Vladimir", "Sergey", "Andrey", "Ivan", "Maxim", "Egor" };
+    return Name[rand() % 8];
 }
-void drk(int& a) {
-	do {
-		input(a, "input choice: ");
-		if (a < 1)
-			cout << "repeat your choice" << endl;
-		if (a > 7)
-			cout << "repeat your choice" << endl;
-	} while (a < 1 || a > 7);
-	cout << "continue..." << endl;
+
+string generateOtch() {
+    string Otch[] = { "Alexeyevich", "Dmitrievich", "Vladimirovich", "Sergeevich", "Andreevich", "Ivanovich", "Maximovich", "Egorovich" };
+    return Otch[rand() % 8];
 }
-// Функция поиска данных
-void findData(people* x, int N) {
-	int choice, id;
-	string familiya, name, otch, mail, webpage, icq;
-	cout << "1. ID" << " " << "2. Familiya" << " " << "3. Name" << " " << "4. Otchestvo" << " " << "5. Mail" << " " << "6. WebPage" << " " << "7. ICQ" << endl;
-	drk(choice);
-	// Поиск по ID
-	if (choice == 1) {
-		input(id, "input id = ");
-		for (int i = 0; i < N; i++) {
-			if (x[i].id == id)
-				printOnePeople(x[i]);
-		}
-	}
-	// Поиск по фамилии
-	if (choice == 2) {
-		input(familiya, "input familiya = ");
-		for (int i = 0; i < N; i++) {
-			if (x[i].Fam == familiya)
-				printOnePeople(x[i]);
-		}
-	}
-	// Поиск по имени
-	if (choice == 3) {
-		input(name, "input name = ");
-		for (int i = 0; i < N; i++) {
-			if (x[i].Name == name)
-				printOnePeople(x[i]);
-		}
-	}
-	// Поиск по отчеству
-	if (choice == 4) {
-		input(otch, "input otchestvo = ");
-		for (int i = 0; i < N; i++) {
-			if (x[i].Otch == otch)
-				printOnePeople(x[i]);
-		}
-	}
-	// Поиск по почте
-	if (choice == 5) {
-		input(mail, "input mail = ");
-		for (int i = 0; i < N; i++) {
-			if (x[i].Mail == mail)
-				printOnePeople(x[i]);
-		}
-	}
-	// Поиск по веб странице
-	if (choice == 6) {
-		input(webpage, "input webpage = ");
-		for (int i = 0; i < N; i++) {
-			if (x[i].WebPage == webpage)
-				printOnePeople(x[i]);
-		}
-	}
-	// Поиск по ICQ номеру
-	if (choice == 7) {
-		input(icq, "input icq number = ");
-		for (int i = 0; i < N; i++) {
-			if (x[i].ICQnumber == icq)
-				printOnePeople(x[i]);
-		}
-	}
+
+string generateWorkshop() {
+    string workshops[] = { "Workshop No.1", "Workshop No.2", "Workshop No.3", "Assembly shop", "Machine shop" };
+    return workshops[rand() % 5];
 }
-void tmpRecords(people& a, people& b) {
-	people tmp = a;
-	a = b;
-	b = tmp;
+
+char generateCategory() {
+    char categories[] = { 'A', 'B', 'C' };
+    return categories[rand() % 3];
 }
-// Функция сортировки
-void sortRecords(people* x, int N) {
-	int choice;
-	cout << "1. ID" << " " << "2. Familiya" << " " << "3. Name" << " " << "4. Otchestvo" << " " << "5. Mail" << " " << "6. WebPage" << " " << "7. ICQ" << endl;
-	drk(choice);
-	int count = 0;  
-	bool flag;
-	for (int i = 0; i < N; i++) {
-		flag = true;                   
-		for (int j = 0; j < N - 1; j++) {
-			count++;
-			// Сортировка по ID
-			if (choice == 1) {
-				if (x[j].id > x[j + 1].id) {
-					flag = false;
-					tmpRecords(x[j], x[j + 1]);
-				}
-			}
-			// Сортировка по фамилии
-			if (choice == 2) {
-				if (x[j].Fam > x[j + 1].Fam) {
-					flag = false;
-					tmpRecords(x[j], x[j + 1]);
-				}
-			}
-			// Сортировка по имени
-			if (choice == 3) {
-				if (x[j].Name > x[j + 1].Name) {
-					flag = false;
-					tmpRecords(x[j], x[j + 1]);
-				}
-			}
-			// Сортировка по отчеству
-			if (choice == 4) {
-				if (x[j].Otch > x[j + 1].Otch) {
-					flag = false;
-					tmpRecords(x[j], x[j + 1]);
-				}
-			}
-			// Сортировка по почте
-			if (choice == 5) {
-				if (x[j].Mail > x[j + 1].Mail) {
-					flag = false;
-					tmpRecords(x[j], x[j + 1]);
-				}
-			}
-			// Сортировка по веб странице
-			if (choice == 6) {
-				if (x[j].WebPage > x[j + 1].WebPage) {
-					flag = false;
-					tmpRecords(x[j], x[j + 1]);
-				}
-			}
-			// Сортировка по ICQ номеру
-			if (choice == 7) {
-				if (choice == 7 && x[j].ICQnumber > x[j + 1].ICQnumber) {
-					flag = false;
-					tmpRecords(x[j], x[j + 1]);
-				}
-			}
-		}
-		cout << endl;
-		if (flag) 
-			break;
-	}
-	// Вывод результата
-	for (int i = 0; i < N; i++) {
-		printOnePeople(x[i]);
-	}
+
+void generateRecord(Worker& x) {
+    x.Fam = generateFam();
+    x.Name = generateName();
+    x.Otch = generateOtch();
+    x.workshop = generateWorkshop();
+    x.quantity = rand() % 100 + 1; 
+    x.category = generateCategory();
 }
-// Объявление функции для меню
-void print() {
-	int num;
-	int N = 0;
-	people* x = nullptr;
-	do {
-		input(num, "input case: ");
-		switch (num) {
-		// Кейс ввода записей
-		case(1):
-			// Условие, если ввода не было
-			if (N == 0) {
-				input(N, "input n = ");
-				output(N, "N = ");
-				x = newMassiv(N);
-				setPeople(x, N);
-				break;
-			}
-			//Условие, если ввод записей уже произошёл
-			else {
-				int add;
-				input(add, "input add = ");
-				addRecords(x, N, add);
-				output(N, "N = ");
-				break;
-			}
-		// Кейс вывода случайных записей
-		case(2):
-			printPeople(x, N);
-			break;
-		// Кейс удаления записей
-		case(3):
-			deleteRecords(x, N);
-			break;
-		// Кейс освобождения и выхода из функции
-		case(4):
-			sortRecords(x, N);
-			break;
-		// Кейс поиска данных
-		case(5):
-			findData(x, N);
-			break;
-		// Кейс выхода
-		case(6):
-			cout << "Exit" << endl;
-			deleteMassiv(x);
-			_getch();
-			break;
-		default:
-			cout << "Wrong choice" << endl;
-		}
-	} while (num != 6);
+
+void printRecord(Worker w, int index) {
+    cout << index + 1 << ". "
+        << w.Name << " " << w.Fam << " " << w.Otch
+        << ", Цех: " << w.workshop
+        << ", Количество: " << w.quantity
+        << ", Категория: " << w.category << endl;
 }
-// Вывод таблицы
-void table() {
-	cout << "1. input count of records" << endl;
-	cout << "2. output inputed records" << endl;
-	cout << "3. delete records" << endl;
-	cout << "4. sort records" << endl;
-	cout << "5. find records" << endl;
-	cout << "6. exit" << endl;
+
+void vivodAllWorkers(Worker* workers, int size) {
+    if (size == 0) {
+        cout << "Нет записей о рабочих!" << endl;
+        return;
+    }
+    cout << "\n=== СПИСОК РАБОЧИХ ===\n";
+    for (int i = 0; i < size; i++) {
+        printRecord(workers[i], i);
+    }
+    cout << "========================\n\n";
 }
-// Объявление главной функции
+
+void deleteRecord(Worker*& workers, int& size, int index) {
+    if (index < 0 || index >= size) {
+        cout << "Ошибка: неверный индекс для удаления!" << endl;
+        return;
+    }
+
+    Worker* newWorkers = new Worker[size - 1];
+    for (int i = 0, j = 0; i < size; i++) {
+        if (i != index) {
+            newWorkers[j++] = workers[i];
+        }
+    }
+
+    delete[] workers;
+    workers = newWorkers;
+    size--;
+    cout << "Запись успешно удалена!" << endl;
+}
+
+void searchByFam(Worker* workers, int size, string searchFam) {
+    bool found = false;
+    cout << "\n=== РЕЗУЛЬТАТЫ ПОИСКА (фамилия: " << searchFam << ") ===\n";
+    for (int i = 0; i < size; i++) {
+        if (workers[i].Fam == searchFam) {
+            printRecord(workers[i], i);
+            found = true;
+        }
+    }
+    if (!found) {
+        cout << "Рабочие с фамилией \"" << searchFam << "\" не найдены." << endl;
+    }
+    cout << "============================================\n\n";
+}
+
+void sortWorkers(Worker* workers, int size, int fieldChoice) {
+    if (size <= 1) return;
+
+    for (int i = 0; i < size - 1; i++) {
+        for (int j = 0; j < size - i - 1; j++) {
+            bool needSwap = false;
+
+            switch (fieldChoice) {
+            case 1: 
+                if (workers[j].Fam > workers[j + 1].Fam) needSwap = true;
+                break;
+            case 2: 
+                if (workers[j].quantity > workers[j + 1].quantity) needSwap = true;
+                break;
+            case 3: 
+                if (workers[j].category > workers[j + 1].category) needSwap = true;
+                break;
+            case 4: 
+                if (workers[j].workshop > workers[j + 1].workshop) needSwap = true;
+                break;
+            default:
+                cout << "Неверный выбор поля для сортировки!" << endl;
+                return;
+            }
+
+            if (needSwap) {
+                swap(workers[j], workers[j + 1]);
+            }
+        }
+    }
+    cout << "Сортировка выполнена!" << endl;
+}
+
+void deleteArray(Worker*& workers) {
+    delete[] workers;
+    workers = nullptr;
+}
+
+void Menu() {
+    Worker* workers = nullptr;
+    int currentSize = 0;
+    int choice;
+
+    do {
+        cout << "\n=== УЧЕТ ИЗДЕЛИЙ РАБОЧИХ ===\n";
+        cout << "1. Добавить записи о рабочих\n";
+        cout << "2. Показать всех рабочих\n";
+        cout << "3. Удалить запись (по индексу)\n";
+        cout << "4. Поиск по фамилии\n";
+        cout << "5. Сортировка записей\n";
+        cout << "0. Выход\n";
+        cout << "Ваш выбор: ";
+        input(choice, "");
+
+        switch (choice) {
+        case 1: {
+            int addSize;
+            input(addSize, "Введите количество записей для добавления: ");
+
+            if (addSize <= 0) {
+                cout << "Количество записей должно быть больше 0!" << endl;
+                break;
+            }
+
+            Worker* newWorkers = new Worker[currentSize + addSize];
+
+            for (int i = 0; i < currentSize; i++) {
+                newWorkers[i] = workers[i];
+            }
+
+            for (int i = 0; i < addSize; i++) {
+                generateRecord(newWorkers[currentSize + i]);
+            }
+
+            delete[] workers;
+            workers = newWorkers;
+            currentSize += addSize;
+            cout << "Добавлено " << addSize << " записей! Всего: " << currentSize << endl;
+            break;
+        }
+        case 2: {
+            vivodAllWorkers(workers, currentSize);
+            break;
+        }
+        case 3: {
+            if (currentSize == 0) {
+                cout << "Нет записей для удаления!" << endl;
+                break;
+            }
+            int index;
+            vivodAllWorkers(workers, currentSize);
+            input(index, "Введите номер записи для удаления (1-" + to_string(currentSize) + "): ");
+            deleteRecord(workers, currentSize, index - 1);
+            break;
+        }
+        case 4: {
+            if (currentSize == 0) {
+                cout << "Нет записей для поиска!" << endl;
+                break;
+            }
+            string searchName;
+            input(searchName, "Введите фамилию для поиска: ");
+            searchByFam(workers, currentSize, searchName);
+            break;
+        }
+        case 5: {
+            if (currentSize == 0) {
+                cout << "Нет записей для сортировки!" << endl;
+                break;
+            }
+            int fieldChoice;
+            cout << "Выберите поле для сортировки:\n";
+            cout << "1. По фамилии\n";
+            cout << "2. По количеству изделий\n";
+            cout << "3. По категории\n";
+            cout << "4. По цеху\n";
+            cout << "Ваш выбор: ";
+            input(fieldChoice, "");
+            sortWorkers(workers, currentSize, fieldChoice);
+            cout << "Отсортированный список:\n";
+            vivodAllWorkers(workers, currentSize);
+            break;
+        }
+        case 0: {
+            cout << "Выход из программы..." << endl;
+            break;
+        }
+        default: {
+            cout << "Неверный выбор! Попробуйте снова." << endl;
+            break;
+        }
+        }
+    } while (choice != 0);
+
+    if (workers != nullptr) {
+        deleteArray(workers);
+    }
+}
+
 int main() {
-	// Подключение псевдо генератора случайных чисел
-	srand(time(NULL));
-	// Вывод меню
-	table();
-	// Вызов подпрограммы print(), где содержится меню
-	print();
-	// Выход из функции
-	return 0;
+    setlocale(LC_ALL, "Russian");
+    srand(time(0));
+
+    Menu();
+
+    return 0;
 }
