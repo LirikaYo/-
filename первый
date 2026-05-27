@@ -1,0 +1,122 @@
+#include <iostream>
+#include <fstream>
+#include <string>
+#include <locale>
+#include <ctime>
+
+using namespace std;
+
+void sluch_simfol(string filename){
+	fstream f;
+	f.open(filename, ios_base::out);
+	for (int i = 0; i < 10; i++) {
+		for (int j = 0; j < 20; j++) {
+			int random = rand() % 100;
+			if (random < 30) {
+				int simfol = rand() % 3;
+				if (simfol == 0) f << "*";
+				else if (simfol == 1) f << "-";
+				else f << "+";
+				f << " ";
+			}
+		}
+		f << "\n";
+	}
+	f.close();
+	cout << "file is created..." << endl;
+}
+void podchet(string filename, string& content, int& starCount, int& minusCount, int& plusCount){
+	f.open(filename, ios_base::in);
+	string content;
+	string line;
+
+	while (getline(f, line)) {
+		content += line + "\n";
+
+		for (int i = 0; i < line.length(); i++) {
+			if (line[i] == '*') {
+				starCount++;
+			}
+			else if (line[i] == '-') {
+				minusCount++;
+			}
+			else if (line[i] == '+') {
+				plusCount++;
+			}
+		}
+	}
+	f.close();
+}
+
+void popularSimfol(int starCount, int minusCount, int plusCount, int& maxCount){
+	char popular = ' ';
+	int maxCount = 0;
+
+	if (starCount > maxCount) {
+		maxCount = starCount;
+		popular = '*';
+	}
+	if (minusCount > maxCount) {
+		maxCount = minusCount;
+		popular = '-';
+	}
+	if (plusCount > maxCount) {
+		maxCount = plusCount;
+		popular = '+';
+	}
+	return popular;
+}
+string deleteSimvol(string text, char symbol){
+	string newContent = "";
+	for (int i = 0; i < text.length(); i++) {
+		if (text[i] != symbol) {
+			newContent += text[i];
+		}
+	}
+	return newContent;
+}
+void result(string filename, string content, int starCount, int minusCount, int plusCount){
+	fstream f;
+	f.open(filename, ios_base::out);
+	f << content;
+	f << "\n\"*\" - " << starCount << "; \"-\" - " << minusCount << "; \"+\" - " << plusCount;
+	f.close();
+}
+void vivod(int starCount, int minusCount, int plusCount, int maxCount){
+	cout << "Статистика символов:" << endl;
+	cout << "\"*\" - " << starCount << endl;
+	cout << "\"-\" - " << minusCount << endl;
+	cout << "\"+\" - " << plusCount << endl;
+
+	if (maxCount <= 0) {
+		cout << "Ни один из символов (*, -, +) не найден в файле." << endl;
+	}
+}
+int main() {
+	setlocale(LC_ALL, "RU");
+	srand(time(0));
+
+	string path = "D:\\99999\\";
+	string int_filename = path + "input.txt";
+	string out_filename = path + "output.txt";
+
+	sluch_simfol(int_filename);
+
+	string newContent = "";
+	int starCount = 0;
+	int minusCount = 0;
+	int plusCount = 0;
+	podchet(int_filename, content, starCount, minusCount, plusCount);
+
+	cout << "Содержимое исходного файла:" << endl;
+	cout << content << endl;
+
+	int maxCount = 0;
+	char popular = popularSimfol(starCount, minusCount, plusCount, maxCount);
+
+	content = deleteSimvol(content, popular);
+	result(out_filename, content, starCount, minusCount, plusCount);
+	vivod(starCount, minusCount, plusCount, maxCount);
+
+	return 0;
+}
