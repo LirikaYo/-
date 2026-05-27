@@ -92,7 +92,6 @@ void vivodAll(Worker* workers, int size) {
     cout << "=================================" << endl;
 }
 
-// ========== 1) ФУНКЦИЯ ДЛЯ УДАЛЕНИЯ ЗАПИСЕЙ ==========
 void deleteRecord(Worker*& workers, int& size, int index) {
     if (index < 0 || index >= size) {
         cout << "Неверный индекс!" << endl;
@@ -101,12 +100,10 @@ void deleteRecord(Worker*& workers, int& size, int index) {
 
     Worker* new_workers = new Worker[size - 1];
 
-    // Копируем элементы ДО удаляемого
     for (int i = 0; i < index; i++) {
         new_workers[i] = workers[i];
     }
 
-    // Копируем элементы ПОСЛЕ удаляемого (со сдвигом влево на 1)
     for (int i = index + 1; i < size; i++) {
         new_workers[i - 1] = workers[i];
     }
@@ -118,7 +115,6 @@ void deleteRecord(Worker*& workers, int& size, int index) {
     cout << "Запись успешно удалена!" << endl;
 }
 
-// ========== 2) ФУНКЦИЯ ПОИСКА ДАННЫХ (по фамилии) ==========
 void searchByFam(Worker* workers, int size, const string& searchFam) {
     bool found = false;
     cout << "\n========== РЕЗУЛЬТАТЫ ПОИСКА ==========" << endl;
@@ -134,7 +130,6 @@ void searchByFam(Worker* workers, int size, const string& searchFam) {
     cout << "=========================================" << endl;
 }
 
-// ========== 3) ФУНКЦИЯ СОРТИРОВКИ ЗАПИСЕЙ ПО ОДНОМУ ИЗ ПОЛЕЙ ==========
 void sortRecords(Worker* workers, int size, int fieldChoice) {
     if (size <= 1) return;
 
@@ -143,13 +138,13 @@ void sortRecords(Worker* workers, int size, int fieldChoice) {
             bool needSwap = false;
 
             switch (fieldChoice) {
-            case 1:  // по фамилии
+            case 1: 
                 if (strcmp(workers[j].Fam, workers[j + 1].Fam) > 0) needSwap = true;
                 break;
-            case 2:  // по количеству изделий
+            case 2:  
                 if (workers[j].quantity > workers[j + 1].quantity) needSwap = true;
                 break;
-            case 3:  // по категории
+            case 3:  
                 if (workers[j].category > workers[j + 1].category) needSwap = true;
                 break;
             default:
@@ -165,7 +160,6 @@ void sortRecords(Worker* workers, int size, int fieldChoice) {
     cout << "Сортировка выполнена!" << endl;
 }
 
-// ========== ДОБАВЛЕНИЕ ЗАПИСЕЙ (автоматическое) ==========
 void addRecords(Worker*& workers, int& size, int addSize) {
     if (addSize <= 0) {
         cout << "Количество записей должно быть больше 0!" << endl;
@@ -188,7 +182,6 @@ void addRecords(Worker*& workers, int& size, int addSize) {
     cout << "Добавлено " << addSize << " записей автоматически! Всего: " << size << endl;
 }
 
-// ========== РАБОТА С БИНАРНЫМИ ФАЙЛАМИ (без reinterpret_cast) ==========
 void save(const string& filename, Worker* workers, int size) {
     FILE* f = fopen(filename.c_str(), "wb");
 
