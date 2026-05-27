@@ -26,6 +26,7 @@ void sluch_simfol(string filename){
 	cout << "file is created..." << endl;
 }
 void podchet(string filename, string& content, int& starCount, int& minusCount, int& plusCount){
+	fstream f;
 	f.open(filename, ios_base::in);
 	string content;
 	string line;
@@ -48,9 +49,9 @@ void podchet(string filename, string& content, int& starCount, int& minusCount, 
 	f.close();
 }
 
-void popularSimfol(int starCount, int minusCount, int plusCount, int& maxCount){
+char popularSimfol(int starCount, int minusCount, int plusCount, int& maxCount){
 	char popular = ' ';
-	int maxCount = 0;
+	maxCount = 0;
 
 	if (starCount > maxCount) {
 		maxCount = starCount;
@@ -102,7 +103,7 @@ int main() {
 
 	sluch_simfol(int_filename);
 
-	string newContent = "";
+	string Content = "";
 	int starCount = 0;
 	int minusCount = 0;
 	int plusCount = 0;
