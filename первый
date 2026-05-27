@@ -10,9 +10,11 @@ void sluch_simfol(string filename, int stroki){
 	fstream f;
 	f.open(filename, ios_base::out);
 
+	cin.ignore();
+
 	string stroka;
 
-	for (int i = 1; i < stroki; i++){
+	for (int i = 1; i <= stroki; i++){
 		cout << "Введите кол-во строк" << i << "Введите символы";
 		getline(cin, stroka);
 
@@ -109,7 +111,7 @@ int main() {
 	string int_filename = path + "input.txt";
 	string out_filename = path + "output.txt";
 
-	sluch_simfol(int_filename);
+	sluch_simfol(int_filename, stroki);
 
 	string content = "";
 	int starCount = 0;
