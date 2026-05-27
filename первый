@@ -6,7 +6,20 @@
 
 using namespace std;
 
-void sluch_simfol(string filename, int stroki){
+void vvod(int& x, string s) {
+	cout << s;
+	cin >> x;
+	while (x <= 0) {
+		cout << "Введите положительное число: ";
+		cin >> x;
+	}
+}
+void vivod(string content) {
+	cout << "Содержимое исходного файла:" << endl;
+	cout << content << endl;
+}
+
+void sluch_simfol(string filename, int stroki) {
 	fstream f;
 	f.open(filename, ios_base::out);
 
@@ -14,29 +27,29 @@ void sluch_simfol(string filename, int stroki){
 
 	string stroka;
 
-	for (int i = 1; i <= stroki; i++){
-		cout << "Введите кол-во строк" << i << "Введите символы";
+	for (int i = 1; i <= stroki; i++) {
+		cout << "Строка №" << i << " Введите символы: ";
 		getline(cin, stroka);
 
-	bool prafilnost = true;
-	for (int j = 0; j < stroka.length(); j++){
-		if (stroka[j] != '-' && stroka[j] != '+' && stroka[j] != '*' && stroka[j] != ' '){
-			prafilnost = false;
-			break;
+		bool prafilnost = true;
+		for (int j = 0; j < stroka.length(); j++) {
+			if (stroka[j] != '-' && stroka[j] != '+' && stroka[j] != '*' && stroka[j] != ' ') {
+				prafilnost = false;
+				break;
+			}
 		}
-	}
-	if (!prafilnost) {
-		cout << "Можно только *, -, + " << endl;
-		i--;
-	}
-	else {
-		f << stroka << "\n";
+		if (!prafilnost) {
+			cout << "Можно только *, -, + " << endl;
+			i--;
+		}
+		else {
+			f << stroka << "\n";
 		}
 	}
 	f.close();
 	cout << "file is created..." << endl;
 }
-void podchet(string filename, string& content, int& starCount, int& minusCount, int& plusCount){
+void podchet(string filename, string& content, int& starCount, int& minusCount, int& plusCount) {
 	fstream f;
 	f.open(filename, ios_base::in);
 	string line;
@@ -59,7 +72,7 @@ void podchet(string filename, string& content, int& starCount, int& minusCount, 
 	f.close();
 }
 
-char popularSimfol(int starCount, int minusCount, int plusCount, int& maxCount){
+char popularSimfol(int starCount, int minusCount, int plusCount, int& maxCount) {
 	char popular = ' ';
 	maxCount = 0;
 
@@ -77,7 +90,7 @@ char popularSimfol(int starCount, int minusCount, int plusCount, int& maxCount){
 	}
 	return popular;
 }
-string deleteSimvol(string text, char symbol){
+string deleteSimvol(string text, char symbol) {
 	string newContent = "";
 	for (int i = 0; i < text.length(); i++) {
 		if (text[i] != symbol) {
@@ -86,14 +99,14 @@ string deleteSimvol(string text, char symbol){
 	}
 	return newContent;
 }
-void result(string filename, string content, int starCount, int minusCount, int plusCount){
+void result(string filename, string content, int starCount, int minusCount, int plusCount) {
 	fstream f;
 	f.open(filename, ios_base::out);
 	f << content;
 	f << "\n\"*\" - " << starCount << "; \"-\" - " << minusCount << "; \"+\" - " << plusCount;
 	f.close();
 }
-void vivod(int starCount, int minusCount, int plusCount, int maxCount){
+void vivod(int starCount, int minusCount, int plusCount, int maxCount) {
 	cout << "Статистика символов:" << endl;
 	cout << "\"*\" - " << starCount << endl;
 	cout << "\"-\" - " << minusCount << endl;
@@ -111,6 +124,10 @@ int main() {
 	string int_filename = path + "input.txt";
 	string out_filename = path + "output.txt";
 
+
+	int stroki;
+	vvod(stroki, "Кол - во строк: ");
+
 	sluch_simfol(int_filename, stroki);
 
 	string content = "";
@@ -119,8 +136,7 @@ int main() {
 	int plusCount = 0;
 	podchet(int_filename, content, starCount, minusCount, plusCount);
 
-	cout << "Содержимое исходного файла:" << endl;
-	cout << content << endl;
+	vivod(content);
 
 	int maxCount = 0;
 	char popular = popularSimfol(starCount, minusCount, plusCount, maxCount);
