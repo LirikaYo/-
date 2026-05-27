@@ -6,21 +6,30 @@
 
 using namespace std;
 
-void sluch_simfol(string filename){
+void sluch_simfol(string filename, int stroki){
 	fstream f;
 	f.open(filename, ios_base::out);
-	for (int i = 0; i < 10; i++) {
-		for (int j = 0; j < 20; j++) {
-			int random = rand() % 100;
-			if (random < 30) {
-				int simfol = rand() % 3;
-				if (simfol == 0) f << "*";
-				else if (simfol == 1) f << "-";
-				else f << "+";
-				f << " ";
-			}
+
+	string stroka;
+
+	for (int i = 1; i < stroki; i++){
+		cout << "Введите кол-во строк" << i << "Введите символы";
+		getline(cin, stroka);
+
+	bool prafilnost = true;
+	for (int j = 0; j < stroka.length(); j++){
+		if (stroka[j] != '-' && stroka[j] != '+' && stroka[j] != '*' && stroka[j] != ' '){
+			prafilnost = false;
+			break;
 		}
-		f << "\n";
+	}
+	if (!prafilnost) {
+		cout << "Можно только *, -, + " << endl;
+		i--;
+	}
+	else {
+		f << stroka << "\n";
+		}
 	}
 	f.close();
 	cout << "file is created..." << endl;
@@ -28,7 +37,6 @@ void sluch_simfol(string filename){
 void podchet(string filename, string& content, int& starCount, int& minusCount, int& plusCount){
 	fstream f;
 	f.open(filename, ios_base::in);
-	string content;
 	string line;
 
 	while (getline(f, line)) {
@@ -103,7 +111,7 @@ int main() {
 
 	sluch_simfol(int_filename);
 
-	string Content = "";
+	string content = "";
 	int starCount = 0;
 	int minusCount = 0;
 	int plusCount = 0;
