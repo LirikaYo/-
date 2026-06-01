@@ -251,8 +251,7 @@ void menu(Worker*& workers, int& size) {
 				cout << "Нет записей для сохранения!" << endl;
 			}
 			else {
-				save("workes.bis", workers, size);
-				break;
+				save("workers.bin", workers, size);
 			}
 			break;
 		case 0:
