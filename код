@@ -88,6 +88,52 @@ void vivodAll(Worker* workers, int size) {
 	}
 	cout << "=================================" << endl;
 }
+string readString(fstream& f) {
+    int len;
+
+    f.read((char*)&len, sizeof(len));
+
+    string s(len, ' ');
+
+    f.read(&s[0], len);
+
+    return s;
+}
+void load(const string& filename, Worker*& workers, int& size) {
+    string path = "D:\\333\\";
+    string file = path + filename;
+
+    fstream f;
+    f.open(file, ios::in | ios::binary);
+
+    if (f.is_open()) {
+
+        f.read((char*)&size, sizeof(size));
+
+        workers = new Worker[size];
+
+        for (int i = 0; i < size; i++) {
+
+            workers[i].Fam = readString(f);
+            workers[i].Name = readString(f);
+            workers[i].Otch = readString(f);
+            workers[i].workshop = readString(f);
+
+            f.read((char*)&workers[i].quantity,
+                   sizeof(workers[i].quantity));
+
+            f.read((char*)&workers[i].category,
+                   sizeof(workers[i].category));
+        }
+
+        f.close();
+
+        cout << "data is loaded..." << endl;
+    }
+    else {
+        cout << "file is not open for reading..." << endl;
+    }
+}
 
 void deleteRecord(Worker*& workers, int& size, int index) {
 	if (index < 0 || index >= size) {
