@@ -1,149 +1,330 @@
 #include <iostream>
 #include <fstream>
 #include <string>
-#include <locale>
 #include <ctime>
+#include <locale>
 
 using namespace std;
 
-void vvod(int& x, string s) {
-	cout << s;
-	cin >> x;
-	while (x <= 0) {
-		cout << "Введите положительное число: ";
-		cin >> x;
-	}
-}
-void vivod(string content) {
-	cout << "Содержимое исходного файла:" << endl;
-	cout << content << endl;
+template <typename example>
+void input(example& n, string s) {
+    cout << s;
+    cin >> n;
 }
 
-void sluch_simfol(string filename, int stroki) {
-	fstream f;
-	f.open(filename, ios_base::out);
-
-	cin.ignore();
-
-	string stroka;
-
-	for (int i = 1; i <= stroki; i++) {
-		cout << "Строка №" << i << " Введите символы: ";
-		getline(cin, stroka);
-
-		bool prafilnost = true;
-		for (int j = 0; j < stroka.length(); j++) {
-			if (stroka[j] != '-' && stroka[j] != '+' && stroka[j] != '*' && stroka[j] != ' ') {
-				prafilnost = false;
-				break;
-			}
-		}
-		if (!prafilnost) {
-			cout << "Можно только *, -, + " << endl;
-			i--;
-		}
-		else {
-			f << stroka << "\n";
-		}
-	}
-	f.close();
-	cout << "file is created..." << endl;
-}
-void podchet(string filename, string& content, int& starCount, int& minusCount, int& plusCount) {
-	fstream f;
-	f.open(filename, ios_base::in);
-	string line;
-
-	while (getline(f, line)) {
-		content += line + "\n";
-
-		for (int i = 0; i < line.length(); i++) {
-			if (line[i] == '*') {
-				starCount++;
-			}
-			else if (line[i] == '-') {
-				minusCount++;
-			}
-			else if (line[i] == '+') {
-				plusCount++;
-			}
-		}
-	}
-	f.close();
+template <typename example>
+void output(example n, string s) {
+    cout << s << n << endl;
 }
 
-char popularSimfol(int starCount, int minusCount, int plusCount, int& maxCount) {
-	char popular = ' ';
-	maxCount = 0;
+struct Worker {
+    string Fam;
+    string Name;
+    string Otch;
+    string workshop;
+    int quantity;
+    char category;
+};
 
-	if (starCount > maxCount) {
-		maxCount = starCount;
-		popular = '*';
-	}
-	if (minusCount > maxCount) {
-		maxCount = minusCount;
-		popular = '-';
-	}
-	if (plusCount > maxCount) {
-		maxCount = plusCount;
-		popular = '+';
-	}
-	return popular;
+string generateFam() {
+    string Fam[] = { "Иванов", "Петров", "Сидоров", "Кузнецов", "Соколов", "Михайлов", "Федоров", "Морозов" };
+    return Fam[rand() % 8];
 }
-string deleteSimvol(string text, char symbol) {
-	string newContent = "";
-	for (int i = 0; i < text.length(); i++) {
-		if (text[i] != symbol) {
-			newContent += text[i];
-		}
-	}
-	return newContent;
-}
-void result(string filename, string content, int starCount, int minusCount, int plusCount) {
-	fstream f;
-	f.open(filename, ios_base::out);
-	f << content;
-	f << "\n\"*\" - " << starCount << "; \"-\" - " << minusCount << "; \"+\" - " << plusCount;
-	f.close();
-}
-void vivod(int starCount, int minusCount, int plusCount, int maxCount) {
-	cout << "Статистика символов:" << endl;
-	cout << "\"*\" - " << starCount << endl;
-	cout << "\"-\" - " << minusCount << endl;
-	cout << "\"+\" - " << plusCount << endl;
 
-	if (maxCount <= 0) {
-		cout << "Ни один из символов (*, -, +) не найден в файле." << endl;
-	}
+string generateName() {
+    string Name[] = { "Алексей", "Дмитрий", "Владимир", "Сергей", "Андрей", "Иван", "Максим", "Егор" };
+    return Name[rand() % 8];
 }
+
+string generateOtch() {
+    string Otch[] = { "Алексеевич", "Дмитриевич", "Владимирович", "Сергеевич", "Андреевич", "Иванович", "Максимович", "Егорович" };
+    return Otch[rand() % 8];
+}
+
+string generateWorkshop() {
+    string workshops[] = { "Цех №1", "Цех №2", "Цех №3", "Цех №4", "Цех №5" };
+    return workshops[rand() % 5];
+}
+
+char generateCategory() {
+    char categories[] = { 'A', 'B', 'C' };
+    return categories[rand() % 3];
+}
+
+Worker setOneWorker(int _id) {
+    Worker x;
+    x.Fam = generateFam();
+    x.Name = generateName();
+    x.Otch = generateOtch();
+    x.workshop = generateWorkshop();
+    x.quantity = rand() % 100 + 1;
+    x.category = generateCategory();
+    return x;
+}
+
+void setWorkers(Worker* x, int count) {
+    for (int i = 0; i < count; i++) {
+        x[i] = setOneWorker(i);
+    }
+}
+
+void printOneWorker(Worker& x) {
+    cout << x.Fam << " " << x.Name << " " << x.Otch << " " << x.workshop << " " << x.quantity << " " << x.category << endl;
+}
+
+void printWorkers(Worker* x, int count) {
+    for (int i = 0; i < count; i++) {
+        printOneWorker(x[i]);
+    }
+}
+
+Worker* newMassiv(int N) {
+    Worker* x = new Worker[N];
+    return x;
+}
+
+void deleteMassiv(Worker*& x) {
+    delete[] x;
+    x = nullptr;
+}
+
+void addRecords(Worker*& x, int& N, int add) {
+    Worker* newX = newMassiv(N + add);
+    for (int i = 0; i < N; i++)
+        newX[i] = x[i];
+    for (int i = 0; i < add; i++)
+        newX[N + i] = setOneWorker(N + i);
+    deleteMassiv(x);
+    x = newX;
+    N += add;
+}
+
+void deleteRecords(Worker*& x, int& N) {
+    deleteMassiv(x);
+    N = 0;
+    cout << "записи удалены" << endl;
+}
+
+void drk(int& a) {
+    do {
+        input(a, "введите выбор: ");
+        if (a < 1)
+            cout << "повторите ваш выбор" << endl;
+        if (a > 7)
+            cout << "повторите ваш выбор" << endl;
+    } while (a < 1 || a > 7);
+    cout << "продолжаем..." << endl;
+}
+
+template <typename example>
+void funcFindData(Worker* x, int N, example Worker::* a, string s) {
+    example b;
+    input(b, s);
+    for (int i = 0; i < N; i++) {
+        if (x[i].*a == b)
+            printOneWorker(x[i]);
+    }
+}
+
+void findData(Worker* x, int N) {
+    int choice;
+    cout << "1. Фамилия" << " " << "2. Имя" << " " << "3. Отчество" << " " << "4. Цех" << " " << "5. Категория" << " " << "6. Количество" << endl;
+    drk(choice);
+    switch (choice) {
+    case(1):
+        funcFindData(x, N, &Worker::Fam, "введите Фамилию = ");
+        break;
+    case(2):
+        funcFindData(x, N, &Worker::Name, "введите Имя = ");
+        break;
+    case(3):
+        funcFindData(x, N, &Worker::Otch, "введите Отчество = ");
+        break;
+    case(4):
+        funcFindData(x, N, &Worker::workshop, "введите Цех = ");
+        break;
+    case(5):
+        funcFindData(x, N, &Worker::category, "введите Категорию = ");
+        break;
+    case(6):
+        funcFindData(x, N, &Worker::quantity, "введите Количество = ");
+        break;
+    default:
+        cout << "Неверный выбор" << endl;
+    }
+}
+
+void tmpRecords(Worker& a, Worker& b) {
+    Worker tmp = a;
+    a = b;
+    b = tmp;
+}
+
+template <typename example>
+void funcSortRecords(Worker* x, int N, example Worker::* a) {
+    bool flag;
+    for (int i = 0; i < N; i++) {
+        flag = true;
+        for (int j = 0; j < N - 1; j++) {
+            if (x[j].*a > x[j + 1].*a) {
+                flag = false;
+                tmpRecords(x[j], x[j + 1]);
+            }
+        }
+        if (flag)
+            break;
+    }
+}
+
+void sortRecords(Worker* x, int N) {
+    int choice;
+    cout << "1. Фамилия" << " " << "2. Имя" << " " << "3. Отчество" << " " << "4. Цех" << " " << "5. Категория" << " " << "6. Количество" << endl;
+    drk(choice);
+    switch (choice) {
+    case(1):
+        funcSortRecords(x, N, &Worker::Fam);
+        break;
+    case(2):
+        funcSortRecords(x, N, &Worker::Name);
+        break;
+    case(3):
+        funcSortRecords(x, N, &Worker::Otch);
+        break;
+    case(4):
+        funcSortRecords(x, N, &Worker::workshop);
+        break;
+    case(5):
+        funcSortRecords(x, N, &Worker::category);
+        break;
+    case(6):
+        funcSortRecords(x, N, &Worker::quantity);
+        break;
+    default:
+        cout << "Неверный выбор" << endl;
+    }
+    printWorkers(x, N);
+}
+
+void createFile(Worker* x, int N, string& file) {
+    fstream f;
+    f.open(file, ios_base::out | ios_base::binary);
+    if (f.is_open()) {
+        cout << "файл открыт для записи..." << endl;
+        for (int i = 0; i < N; i++) {
+            f.write((char*)&x[i], sizeof(Worker));
+        }
+        cout << "данные добавлены..." << endl;
+        f.close();
+    }
+    else {
+        cout << "файл не открыт для записи..." << endl;
+    }
+}
+
+void readFile(Worker* x, int N, string& file) {
+    fstream f;
+    f.open(file, ios_base::in | ios_base::binary);
+    if (f.is_open()) {
+        cout << "файл открыт для чтения..." << endl;
+        f.seekg(0, ios::end);
+        int size = f.tellg() / sizeof(Worker);
+        f.seekg(0, ios::beg);
+        x = newMassiv(size);
+        for (int i = 0; i < size; i++) {
+            f.read((char*)&x[i], sizeof(Worker));
+        }
+        N = size;
+        f.close();
+    }
+    else {
+        cout << "файл не открыт для чтения..." << endl;
+    }
+}
+
+void recreateFile(Worker* x, int N, string& file) {
+    fstream f;
+    f.open(file, ios_base::out | ios_base::binary);
+    if (f.is_open()) {
+        for (int i = 0; i < N; i++) {
+            f.write((char*)&x[i], sizeof(Worker));
+        }
+        cout << "файл пересоздан..." << endl;
+        f.close();
+    }
+    else {
+        cout << "файл не открыт для записи..." << endl;
+    }
+}
+
+void print(string& file) {
+    int num;
+    int N = 0;
+    Worker* x = nullptr;
+
+    readFile(x, N, file);
+
+    do {
+        input(num, "введите номер: ");
+        switch (num) {
+        case(1):
+            if (N == 0) {
+                input(N, "введите n = ");
+                output(N, "N = ");
+                x = newMassiv(N);
+                setWorkers(x, N);
+            }
+            else {
+                int add;
+                input(add, "введите add = ");
+                addRecords(x, N, add);
+                output(N, "N = ");
+                recreateFile(x, N, file);
+            }
+            break;
+        case(2):
+            printWorkers(x, N);
+            createFile(x, N, file);
+            break;
+        case(3):
+            deleteRecords(x, N);
+            recreateFile(x, N, file);
+            break;
+        case(4):
+            sortRecords(x, N);
+            recreateFile(x, N, file);
+            break;
+        case(5):
+            findData(x, N);
+            break;
+        case(0):
+            cout << "Выход" << endl;
+            printWorkers(x, N);
+            deleteMassiv(x);
+            break;
+        default:
+            cout << "Неверный выбор" << endl;
+        }
+    } while (num != 6);
+}
+
+void showMenu() {
+    cout << "\n========== МЕНЮ ==========" << endl;
+    cout << "1. Добавить записи" << endl;
+    cout << "2. Показать все записи" << endl;
+    cout << "3. Удалить запись" << endl;
+    cout << "4. Поиск записи по фамилии" << endl;
+    cout << "5. Сортировка записей по количеству изделий" << endl;
+    cout << "0. Выход" << endl;
+    cout << "Ваш выбор: ";
+}
+
 int main() {
-	setlocale(LC_ALL, "RU");
-	srand(time(0));
-
-	string path = "D:\\99999\\";
-	string int_filename = path + "input.txt";
-	string out_filename = path + "output.txt";
-
-
-	int stroki;
-	vvod(stroki, "Кол - во строк: ");
-
-	sluch_simfol(int_filename, stroki);
-
-	string content = "";
-	int starCount = 0;
-	int minusCount = 0;
-	int plusCount = 0;
-	podchet(int_filename, content, starCount, minusCount, plusCount);
-
-	vivod(content);
-
-	int maxCount = 0;
-	char popular = popularSimfol(starCount, minusCount, plusCount, maxCount);
-
-	content = deleteSimvol(content, popular);
-	result(out_filename, content, starCount, minusCount, plusCount);
-	vivod(starCount, minusCount, plusCount, maxCount);
-
-	return 0;
+    setlocale(LC_ALL, "Russian");
+    srand(time(NULL));
+    string part = "D:\\333\\";
+    string name = "workers.bin";
+    string filename = part + name;
+    showMenu();
+    print(filename);
+    return 0;
 }
