@@ -71,6 +71,12 @@ void oneWorker(const Worker& w, int index) {
          << ", Категория: " << w.category
          << endl;
 }
+void writeString(fstream& f, const string& s) {
+    int len = s.length();
+
+    f.write((char*)&len, sizeof(len));
+    f.write(s.c_str(), len);
+}
 void vivodAll(Worker* workers, int size) {
 	if (size == 0) {
 		cout << "Нет записей!" << endl;
