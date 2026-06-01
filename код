@@ -2,353 +2,263 @@
 #include <fstream>
 #include <string>
 #include <ctime>
+#include <locale>
 
 using namespace std;
 
+template <typename example>
+void input(example& n, string s) {
+    cout << s;
+    cin >> n;
+}
+
+template <typename example>
+void output(example n, string s) {
+    cout << s << n << endl;
+}
+
 struct Worker {
-	string Fam;
-	string Name;
-	string Otch;
-	string workshop;
-	int quantity;
-	char category;
+    string Fam;
+    string Name;
+    string Otch;
+    string workshop;
+    int quantity;
+    char category;
 };
 
 string generateFam() {
-	string Fam[] = {
-		"Ivanov", "Petrov", "Sidorov", "Kuznetsov", "Sokolov", "Mikhailov", "Fedorov", "Morozov"};
-	return Fam[rand() % 8];
+    string Fam[] = {
+        "Ivanov", "Petrov", "Sidorov", "Kuznetsov", "Sokolov", "Mikhailov", "Fedorov", "Morozov" };
+    return Fam[rand() % 8];
 }
 
 string generateName() {
-	string Name[] = {
-		"Alexey", "Dmitry", "Vladimir", "Sergey", "Andrey", "Ivan", "Maxim", "Egor"};
-	return Name[rand() % 8];
+    string Name[] = {
+        "Alexey", "Dmitry", "Vladimir", "Sergey", "Andrey", "Ivan", "Maxim", "Egor" };
+    return Name[rand() % 8];
 }
 
 string generateOtch() {
-	string Otch[] = {
-		"Alexeyevich", "Dmitrievich", "Vladimirovich", "Sergeevich", "Andreevich", "Ivanovich", "Maximovich", "Egorovich"};
-	return Otch[rand() % 8];
+    string Otch[] = {
+        "Alexeyevich", "Dmitrievich", "Vladimirovich", "Sergeevich", "Andreevich", "Ivanovich", "Maximovich", "Egorovich" };
+    return Otch[rand() % 8];
 }
 
 string generateWorkshop() {
-	string workshops[] = {
-		"Цех №1", "Цех №2", "Цех №3", "Цех №4", "Цех №5"};
-	return workshops[rand() % 5];
+    string workshops[] = {
+        "Цех №1", "Цех №2", "Цех №3", "Цех №4", "Цех №5" };
+    return workshops[rand() % 5];
 }
 
 char generateCategory() {
-	char categories[] = { 'A', 'B', 'C' };
-	return categories[rand() % 3];
+    char categories[] = { 'A', 'B', 'C' };
+    return categories[rand() % 3];
 }
 
-void generateRecord(Worker& x) {
-	x.Fam = generateFam();
-	x.Name = generateName();
-	x.Otch = generateOtch();
-	x.workshop = generateWorkshop();
-	x.quantity = rand() % 100 + 1;
-	x.category = generateCategory();
+Worker setOneWorker(int _id) {
+    Worker x;
+    x.Fam = generateFam();
+    x.Name = generateName();
+    x.Otch = generateOtch();
+    x.workshop = generateWorkshop();
+    x.quantity = rand() % 100 + 1;
+    x.category = generateCategory();
+    return x;
 }
 
-void oneWorker(const Worker& w, int index) {
-	cout << index + 1 << ". "
-		<< w.Fam << " "
-		<< w.Name << " "
-		<< w.Otch
-		<< ", Цех: " << w.workshop
-		<< ", Количество: " << w.quantity
-		<< ", Категория: " << w.category
-		<< endl;
-}
-void vivodAll(Worker* workers, int size) {
-	if (size == 0) {
-		cout << "Нет записей!" << endl;
-		return;
-	}
-	cout << "\n========== ВСЕ ЗАПИСИ ==========" << endl;
-	for (int i = 0; i < size; i++) {
-		oneWorker(workers[i], i);
-	}
-	cout << "=================================" << endl;
+void setWorkers(Worker* x, int count) {
+    for (int i = 0; i < count; i++) {
+        x[i] = setOneWorker(i);
+    }
 }
 
-void deleteRecord(Worker*& workers, int& size, int index) {
-	if (index < 0 || index >= size) {
-		cout << "Неверный индекс!" << endl;
-		return;
-	}
-
-	Worker* new_workers = new Worker[size - 1];
-
-	for (int i = 0; i < index; i++) {
-		new_workers[i] = workers[i];
-	}
-
-	for (int i = index + 1; i < size; i++) {
-		new_workers[i - 1] = workers[i];
-	}
-
-	delete[] workers;
-	workers = new_workers;
-	size--;
-
-	cout << "Запись удалена!" << endl;
+void printOneWorker(Worker& x) {
+    cout << x.Fam << " " << x.Name << " " << x.Otch << " " << x.workshop << " " << x.quantity << " " << x.category << endl;
 }
 
-void searchByFam(Worker* workers, int size, const string& searchFam) {
-	bool found = false;
-	cout << "\n========== РЕЗУЛЬТАТЫ ПОИСКА ==========" << endl;
-	for (int i = 0; i < size; i++) {
-		string fam(workers[i].Fam);
-		if (fam == searchFam) {
-			oneWorker(workers[i], i);
-			found = true;
-		}
-	}
-	if (!found) {
-		cout << "Рабочий с фамилией \"" << searchFam << "\" не найден!" << endl;
-	}
-	cout << "=========================================" << endl;
+void printWorkers(Worker* x, int count) {
+    for (int i = 0; i < count; i++) {
+        printOneWorker(x[i]);
+    }
 }
 
-void sortRecords(Worker* workers, int size) {
-	if (size <= 1) return;
-
-	for (int i = 0; i < size - 1; i++) {
-		for (int j = 0; j < size - i - 1; j++) {
-			if (workers[j].quantity > workers[j + 1].quantity) {
-				swap(workers[j], workers[j + 1]);
-			}
-		}
-	}
-	cout << "Сортировка по количеству изделий выполнена!" << endl;
+Worker* newMassiv(int N) {
+    Worker* x = new Worker[N];
+    return x;
 }
 
-void addRecords(Worker*& workers, int& size, int addSize) {
-	if (addSize <= 0) {
-		cout << "Количество записей должно быть больше 0!" << endl;
-		return;
-	}
-
-	Worker* new_workers = new Worker[size + addSize];
-
-	for (int i = 0; i < size; i++) {
-		new_workers[i] = workers[i];
-	}
-
-	for (int i = 0; i < addSize; i++) {
-		generateRecord(new_workers[size + i]);
-	}
-
-	delete[] workers;
-	workers = new_workers;
-	size += addSize;
-	cout << "Добавлено " << addSize << " записей! Всего: " << size << endl;
+void deleteMassiv(Worker*& x) {
+    delete[] x;
+    x = nullptr;
 }
 
-void writeString(fstream& f, const string& s) {
-	int len = s.length();
-	f.write((char*)&len, sizeof(len));
+void addRecords(Worker*& x, int& N, int add) {
+    Worker* newX = newMassiv(N + add);
+    for (int i = 0; i < N; i++)
+        newX[i] = x[i];
+    for (int i = 0; i < add; i++)
+        newX[N + i] = setOneWorker(N + i);
+    deleteMassiv(x);
+    x = newX;
+    N += add;
 }
 
-void save(const string& filename, Worker* workers, int size) {
-	string path = "D:\\333\\";
-	string file = path + filename;
-
-	fstream f;
-
-	f.open(file, ios::out | ios::binary);
-
-	if (f.is_open()) {
-
-		cout << "file is open for writing..." << endl;
-
-		f.write((char*)&size, sizeof(size));
-
-		for (int i = 0; i < size; i++) {
-
-			writeString(f, workers[i].Fam);
-			writeString(f, workers[i].Name);
-			writeString(f, workers[i].Otch);
-			writeString(f, workers[i].workshop);
-
-			f.write((char*)&workers[i].quantity,
-				sizeof(workers[i].quantity));
-
-			f.write((char*)&workers[i].category,
-				sizeof(workers[i].category));
-		}
-
-		cout << "data is added..." << endl;
-
-		f.close();
-	}
-	else {
-		cout << "file is not open for writing..." << endl;
-	}
-}
-string readString(fstream& f) {
-	int len;
-
-	f.read((char*)&len, sizeof(len));
-
-	string s(len, ' ');
-
-	f.read(&s[0], len);
-
-	return s;
-}
-void load(const string& filename, Worker*& workers, int& size) {
-	string path = "D:\\333\\";
-	string file = path + filename;
-
-	fstream f;
-	f.open(file, ios::in | ios::binary);
-
-	if (f.is_open()) {
-
-		f.read((char*)&size, sizeof(size));
-
-		workers = new Worker[size];
-
-		for (int i = 0; i < size; i++) {
-
-			workers[i].Fam = readString(f);
-			workers[i].Name = readString(f);
-			workers[i].Otch = readString(f);
-			workers[i].workshop = readString(f);
-
-			f.read((char*)&workers[i].quantity,
-				sizeof(workers[i].quantity));
-
-			f.read((char*)&workers[i].category,
-				sizeof(workers[i].category));
-		}
-
-		f.close();
-
-		cout << "data is loaded..." << endl;
-	}
-	else {
-		cout << "file is not open for reading..." << endl;
-	}
+void deleteRecords(Worker*& x, int& N) {
+    deleteMassiv(x);
+    N = 0;
+    cout << "записи удалены" << endl;
 }
 
-void showMenu() {
-	cout << "\n========== МЕНЮ ==========" << endl;
-	cout << "1. Добавить записи" << endl;
-	cout << "2. Показать все записи" << endl;
-	cout << "3. Удалить запись" << endl;
-	cout << "4. Поиск записи по фамилии" << endl;
-	cout << "5. Сортировка записей по количеству изделий" << endl;
-	cout << "6. Сохранить в бинарный файл" << endl;
-	cout << "7. Загрузить" << endl;
-	cout << "0. Выход" << endl;
-	cout << "Ваш выбор: ";
+void tmpRecords(Worker& a, Worker& b) {
+    Worker tmp = a;
+    a = b;
+    b = tmp;
 }
 
-void menu(Worker*& workers, int& size) {
-	int choice;
-	const string filename = "workers.bin";
-
-	do {
-		showMenu();
-		cin >> choice;
-
-		switch (choice) {
-		case 1: {
-			int addSize;
-			cout << "Введите количество записей: ";
-			cin >> addSize;
-			addRecords(workers, size, addSize);
-			break;
-		}
-		case 2:
-			vivodAll(workers, size);
-			break;
-		case 3: {
-			if (size == 0) {
-				cout << "Нет записей для удаления!" << endl;
-				break;
-			}
-			int index;
-			vivodAll(workers, size);
-			cout << "Введите номер записи для удаления (1-" << size << "): ";
-			cin >> index;
-			deleteRecord(workers, size, index - 1);
-			break;
-		}
-		case 4: {
-			if (size == 0) {
-				cout << "Нет записей для поиска!" << endl;
-				break;
-			}
-			string searchFam;
-			cout << "Введите фамилию для поиска: ";
-			cin >> searchFam;
-			searchByFam(workers, size, searchFam);
-			break;
-		}
-		case 5: {
-			if (size == 0) {
-				cout << "Нет записей для сортировки!" << endl;
-				break;
-			}
-			sortRecords(workers, size);
-			cout << "\nРезультат сортировки:" << endl;
-			vivodAll(workers, size);
-			break;
-		}
-		case 6:{
-			if (size == 0) {
-				cout << "Нет записей для сохранения!" << endl;
-			}
-			else {
-				save("workers.bin", workers, size);
-				break;
-			}
-			break;
-		}
-		case 7:{
-			delete[] workers;
-			workers = nullptr;
-			size = 0;
-
-			load("workers.bin", workers, size);
-
-			vivodAll(workers, size);
-
-			break;
-		}
-		case 0:{
-			cout << "Программа завершена!" << endl;
-			break;
-		}
-		default:
-			cout << "Неверный выбор!" << endl;
-		}
-	} while (choice != 0);
+void sortByFam(Worker* x, int N) {
+    bool flag;
+    for (int i = 0; i < N; i++) {
+        flag = true;
+        for (int j = 0; j < N - 1; j++) {
+            if (x[j].Fam > x[j + 1].Fam) {
+                flag = false;
+                tmpRecords(x[j], x[j + 1]);
+            }
+        }
+        if (flag)
+            break;
+    }
+    cout << "\n=== Отсортированные по фамилиям записи ===" << endl;
+    printWorkers(x, N);
 }
 
-void delet(Worker*& workers, int& size) {
-	if (workers != nullptr) {
-		delete[] workers;
-		workers = nullptr;
-		size = 0;
-	}
+void findData(Worker* x, int N) {
+    string fam;
+    input(fam, "введите Фамилию для поиска = ");
+    for (int i = 0; i < N; i++) {
+        if (x[i].Fam == fam)
+            printOneWorker(x[i]);
+    }
+}
+
+void createFile(Worker* x, int N, string& file) {
+    fstream f;
+    f.open(file, ios_base::out | ios_base::binary);
+    if (f.is_open()) {
+        cout << "файл открыт для записи..." << endl;
+        for (int i = 0; i < N; i++) {
+            f.write((char*)&x[i], sizeof(Worker));
+        }
+        cout << "данные добавлены..." << endl;
+        f.close();
+    }
+    else {
+        cout << "файл не открыт для записи..." << endl;
+    }
+}
+
+void readFile(Worker* x, int N, string& file) {
+    fstream f;
+    f.open(file, ios_base::in | ios_base::binary);
+    if (f.is_open()) {
+        cout << "файл открыт для чтения..." << endl;
+        f.seekg(0, ios::end);
+        int size = f.tellg() / sizeof(Worker);
+        f.seekg(0, ios::beg);
+        x = newMassiv(size);
+        for (int i = 0; i < size; i++) {
+            f.read((char*)&x[i], sizeof(Worker));
+        }
+        N = size;
+        f.close();
+    }
+    else {
+        cout << "файл не открыт для чтения..." << endl;
+    }
+}
+
+void recreateFile(Worker* x, int N, string& file) {
+    fstream f;
+    f.open(file, ios_base::out | ios_base::binary);
+    if (f.is_open()) {
+        for (int i = 0; i < N; i++) {
+            f.write((char*)&x[i], sizeof(Worker));
+        }
+        cout << "файл пересоздан..." << endl;
+        f.close();
+    }
+    else {
+        cout << "файл не открыт для записи..." << endl;
+    }
+}
+
+void print(string& file) {
+    int num;
+    int N = 0;
+    Worker* x = nullptr;
+
+    readFile(x, N, file);
+
+    do {
+        cout << "\n========== МЕНЮ ==========" << endl;
+        cout << "1. Добавить записи" << endl;
+        cout << "2. Показать все записи" << endl;
+        cout << "3. Удалить все записи" << endl;
+        cout << "4. Сортировка по фамилиям" << endl;
+        cout << "5. Поиск по фамилии" << endl;
+        cout << "0. Выход" << endl;
+        cout << "Ваш выбор: ";
+
+        input(num, "");
+
+        switch (num) {
+        case(1):
+            if (N == 0) {
+                input(N, "введите n = ");
+                output(N, "N = ");
+                x = newMassiv(N);
+                setWorkers(x, N);
+            }
+            else {
+                int add;
+                input(add, "введите add = ");
+                addRecords(x, N, add);
+                output(N, "N = ");
+                recreateFile(x, N, file);
+            }
+            break;
+        case(2):
+            printWorkers(x, N);
+            createFile(x, N, file);
+            break;
+        case(3):
+            deleteRecords(x, N);
+            recreateFile(x, N, file);
+            break;
+        case(4):
+            sortByFam(x, N);  
+            recreateFile(x, N, file);
+            break;
+        case(5):
+            findData(x, N);
+            break;
+        case(0):
+            cout << "Выход" << endl;
+            printWorkers(x, N);
+            deleteMassiv(x);
+            break;
+        default:
+            cout << "Неверный выбор" << endl;
+        }
+    } while (num != 0);
 }
 
 int main() {
-	setlocale(LC_ALL, "Russian");
-	srand(time(nullptr));
-
-	Worker* workers = nullptr;
-	int size = 0;
-
-	menu(workers, size);
-	delet(workers, size);
-
-	return 0;
+    setlocale(LC_ALL, "Russian");
+    srand(time(NULL));
+    string part = "D:\\333\\";
+    string name = "workers.bin";
+    string filename = part + name;
+    print(filename);
+    return 0;
 }
