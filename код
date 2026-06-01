@@ -252,6 +252,7 @@ void menu(Worker*& workers, int& size) {
 			}
 			else {
 				save("workers.bin", workers, size);
+				break;
 			}
 			break;
 		case 0:
