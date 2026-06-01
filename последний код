@@ -1,187 +1,316 @@
-#include <iostream>
-#include <ctime>
-
+#include <iostream> // Подключение библиотеки для потокового ввода и вывода 
+#include <conio.h> // Подключение библиотеки для работы с клавиатурой
+#include <fstream> // Подключение библиотеки для классового двунаправленного файлового потока
+#include <ctime> // Подключение библиотеки для работы со временем
+#include <string> // Подключение библиотеки для работы со строками
+// Использование пространства имен std
 using namespace std;
-
-template<typename T>
-void input(T& x, string msg) {
-    cout << msg;
-    cin >> x;
+// Объявление функции ввода данных
+template <typename example>
+void input(example& n, string s) {
+    cout << s;
+    cin >> n;
 }
-
-double generate_random_chisl() {
-    return (rand() % 20000 - 10000) / 100.0;
+// Объявление функции вывода данных
+template <typename example>
+void output(example n, string s) {
+    cout << s << n << endl;
 }
-
-void vivod_spiska(double* L, int size) {
-    if (size == 0) {
-        cout << "Список пуст!" << endl;
-        return;
-    }
-
-    cout << "\n=== ТЕКУЩИЙ СПИСОК ===\n";
-    for (int i = 0; i < size; i++) {
-        cout << "L[" << i << "] = " << L[i] << endl;
-    }
-    cout << "Всего элементов: " << size << "\n";
-    cout << "========================\n\n";
+// Структура people
+struct people {
+    int id;
+    string Fam;
+    string Name;
+    string Otch;
+    string Mail;
+    string WebPage;
+    string ICQnumber;
+};
+// Генерация одного случайного человека
+people setOnePeople(int _id) {
+    people x;
+    const char* lname[] = { "Ivanov", "Petrov", "Sanych", "Vinogradov", "Alov" };
+    const char* name[] = { "Ivan", "Slava", "San", "Open", "Pol" };
+    const char* otch[] = { "Sergeevich", "Alexeevich", "Ruslanovich", "Ivanich", "Petrovich" };
+    const char* mail[] = { "lip.rus@mail.ru", "petrov0@gmail.com", "alov.1@yandex.ru", "ivanov.123@mail.ru", "ruslanov90@gmail.com" };
+    const char* webpage[] = { "https://elearing.marsu.ru", "https://google.com", "https://yandex.ru", "https://mail.ru", "http://mypage.com" };
+    const char* icqNumber[] = { "654346", "786446", "85634888", "124526", "9876554" };
+    x.id = _id;
+    x.Fam = lname[rand() % 5];
+    x.Name = name[rand() % 5];
+    x.Otch = otch[rand() % 5];
+    x.Mail = mail[rand() % 5];
+    x.WebPage = webpage[rand() % 5];
+    x.ICQnumber = icqNumber[rand() % 5];
+    return x;
 }
-
-void delet_max_element(double*& L, int& size) {
-    if (size == 0) {
-        cout << "Список пуст! Невозможно удалить максимальный элемент." << endl;
-        return;
+// Заполнение массива людей
+void setPeople(people* x, int count) {
+    for (int i = 0; i < count; i++) {
+        x[i] = setOnePeople(i);
     }
-
-    int maxIndex = 0;
-    for (int i = 1; i < size; i++) {
-        if (L[i] > L[maxIndex]) {
-            maxIndex = i;
-        }
-    }
-
-    double maxValue = L[maxIndex];
-
-    double* newL = new double[size - 1];
-
-    for (int i = 0, j = 0; i < size; i++) {
-        if (i != maxIndex) {
-            newL[j++] = L[i];
-        }
-    }
-
-    delete[] L;
-    L = newL;
-    size--;
-
-    cout << "Максимальный элемент " << maxValue << " был удален!" << endl;
 }
-
-void New_elment(double*& L, int& size, int N) {
-    if (N <= 0) {
-        cout << "Количество элементов должно быть больше 0!" << endl;
-        return;
-    }
-
-    double* newL = new double[size + N];
-
-    for (int i = 0; i < size; i++) {
-        newL[i] = L[i];
-    }
-
-    for (int i = 0; i < N; i++) {
-        newL[size + i] = generate_random_chisl();
-    }
-
-    delete[] L;
-    L = newL;
-    size += N;
-
-    cout << "Добавлено " << N << " новых элементов! Всего элементов: " << size << endl;
+// Вывод одного человека
+void printOnePeople(people& x) {
+    cout << x.id << " " << x.Fam << " " << x.Name << " " << x.Otch << " " << x.Mail << " " << x.WebPage << " " << x.ICQnumber << endl;
 }
-
-void deleteArray(double*& L) {
-    delete[] L;
-    L = nullptr;
+// Вывод всех людей
+void printPeople(people* x, int count) {
+    for (int i = 0; i < count; i++) {
+        printOnePeople(x[i]);
+    }
 }
-
-void Menu() {
-    double* L = nullptr;
-    int size = 0;
-    int choice;
-    bool first_sgen_element = false;
-
+// Выделение памяти для массива
+people* newMassiv(int N) {
+    people* x = new people[N];
+    return x;
+}
+// Освобождение памяти
+void deleteMassiv(people*& x) {
+    delete[] x;
+    x = nullptr;
+}
+// Добавление записей
+void addRecords(people*& x, int& N, int add) {
+    people* newX = newMassiv(N + add);
+    for (int i = 0; i < N; i++)
+        newX[i] = x[i];
+    for (int i = 0; i < add; i++)
+        newX[N + i] = setOnePeople(N + i);
+    deleteMassiv(x);
+    x = newX;
+    N += add;
+}
+// Удаление всех записей
+void deleteRecords(people*& x, int& N) {
+    deleteMassiv(x);
+    N = 0;
+    cout << "records deleted" << endl;
+}
+// Вспомогательная функция для проверки ввода меню
+void drk(int& a) {
     do {
-        cout << "\n========== МЕНЮ ПРОГРАММЫ ==========\n";
-        cout << "1. Сгенерировать первый элемент списка\n";
-        cout << "2. Добавить N новых элементов в список\n";
-        cout << "3. Вывести список на экран\n";
-        cout << "4. Изменить список согласно заданию (удалить максимальный элемент)\n";
-        cout << "0. Выход\n";
-        cout << "=====================================\n";
-        cout << "Ваш выбор: ";
-        input(choice, "");
-
-        switch (choice) {
-        case 1: {
-            if (first_sgen_element) {
-                cout << "Первый элемент уже сгенерирован! Используйте пункт 2 для добавления элементов." << endl;
-                break;
-            }
-
-            if (L != nullptr) {
-                deleteArray(L);
-                size = 0;
-            }
-
-            L = new double[1];
-            L[0] = generate_random_chisl();
-            size = 1;
-            first_sgen_element = true;
-
-            cout << "Сгенерирован первый элемент: " << L[0] << endl;
-            break;
-        }
-        case 2: {
-            if (!first_sgen_element) {
-                cout << "Сначала необходимо сгенерировать первый элемент (пункт 1)!" << endl;
-                break;
-            }
-
-            int N;
-            input(N, "Введите количество элементов для добавления: ");
-            New_elment(L, size, N);
-            break;
-        }
-        case 3: {
-            if (!first_sgen_element) {
-                cout << "Список пуст! Сначала сгенерируйте первый элемент (пункт 1)." << endl;
-                break;
-            }
-            vivod_spiska(L, size);
-            break;
-        }
-        case 4: {
-            if (!first_sgen_element) {
-                cout << "Список пуст! Сначала сгенерируйте первый элемент (пункт 1)." << endl;
-                break;
-            }
-
-            if (size == 0) {
-                cout << "Список пуст! Невозможно удалить максимальный элемент." << endl;
-                break;
-            }
-
-            cout << "\nТекущий список перед удалением максимального элемента:" << endl;
-            vivod_spiska(L, size);
-
-            delet_max_element(L, size);
-
-            cout << "\nСписок после удаления максимального элемента:" << endl;
-            vivod_spiska(L, size);
-            break;
-        }
-        case 0: {
-            cout << "Выход из программы..." << endl;
-            break;
-        }
-        default: {
-            cout << "Неверный выбор! Пожалуйста, выберите пункт от 0 до 4." << endl;
-            break;
-        }
-        }
-    } while (choice != 0);
-
-    if (L != nullptr) {
-        deleteArray(L);
+        input(a, "input choice: ");
+        if (a < 1)
+            cout << "repeat your choice" << endl;
+        if (a > 7)
+            cout << "repeat your choice" << endl;
+    } while (a < 1 || a > 7);
+    cout << "continue..." << endl;
+}
+// Универсальная функция поиска
+template <typename example>
+void funcFindData(people* x, int N, example people::* a, string s) {
+    example b;
+    input(b, s);
+    for (int i = 0; i < N; i++) {
+        if (x[i].*a == b)
+            printOnePeople(x[i]);
     }
 }
-
+// Функция поиска
+void findData(people* x, int N) {
+    int choice;
+    cout << "1. ID" << " " << "2. Familiya" << " " << "3. Name" << " " << "4. Otchestvo" << " " << "5. Mail" << " " << "6. WebPage" << " " << "7. ICQ" << endl;
+    drk(choice);
+    switch (choice) {
+    case(1):
+        funcFindData(x, N, &people::id, "input id = ");
+        break;
+    case(2):
+        funcFindData(x, N, &people::Fam, "input Fam = ");
+        break;
+    case(3):
+        funcFindData(x, N, &people::Name, "input Name = ");
+        break;
+    case(4):
+        funcFindData(x, N, &people::Otch, "input Otch = ");
+        break;
+    case(5):
+        funcFindData(x, N, &people::Mail, "input Mail = ");
+        break;
+    case(6):
+        funcFindData(x, N, &people::WebPage, "input WebPage = ");
+        break;
+    case(7):
+        funcFindData(x, N, &people::ICQnumber, "input ICQ = ");
+        break;
+    default:
+        cout << "Wrong choice" << endl;
+    }
+}
+// Обмен записями
+void tmpRecords(people& a, people& b) {
+    people tmp = a;
+    a = b;
+    b = tmp;
+}
+// Универсальная сортировка
+template <typename example>
+void funcSortRecords(people* x, int N, example people::* a) {
+    bool flag;
+    for (int i = 0; i < N; i++) {
+        flag = true;
+        for (int j = 0; j < N - 1; j++) {
+            if (x[j].*a > x[j + 1].*a) {
+                flag = false;
+                tmpRecords(x[j], x[j + 1]);
+            }
+        }
+        if (flag)
+            break;
+    }
+}
+// Сортировка
+void sortRecords(people* x, int N) {
+    int choice;
+    cout << "1. ID" << " " << "2. Familiya" << " " << "3. Name" << " " << "4. Otchestvo" << " " << "5. Mail" << " " << "6. WebPage" << " " << "7. ICQ" << endl;
+    drk(choice);
+    switch (choice) {
+    case(1):
+        funcSortRecords(x, N, &people::id);
+        break;
+    case(2):
+        funcSortRecords(x, N, &people::Fam);
+        break;
+    case(3):
+        funcSortRecords(x, N, &people::Name);
+        break;
+    case(4):
+        funcSortRecords(x, N, &people::Otch);
+        break;
+    case(5):
+        funcSortRecords(x, N, &people::Mail);
+        break;
+    case(6):
+        funcSortRecords(x, N, &people::WebPage);
+        break;
+    case(7):
+        funcSortRecords(x, N, &people::ICQnumber);
+        break;
+    default:
+        cout << "Wrong choice" << endl;
+    }
+    printPeople(x, N);
+}
+// Функция создания файла
+void createFile(people* x, int N, string& file) {
+    fstream f;
+    f.open(file, ios_base::out | ios_base::binary);
+    if (f.is_open()) {
+        cout << "file is open for writing..." << endl;
+        for (int i = 0; i < N; i++) {
+            f.write((char*)&x[i], sizeof(people));
+        }
+        cout << "data is added..." << endl;
+        f.close();
+    }
+    else {
+        cout << "file is not open for writing..." << endl;
+    }
+}
+//Функция чтения файла
+void readFile(people* x, int N, string& file) {
+    fstream f;
+    f.open(file, ios_base::in | ios_base::binary);
+    if (f.is_open()) {
+        cout << "file is open for reading..." << endl;
+        f.seekg(0 * ios::end);
+        int size = f.tellg() / sizeof(people);
+        f.seekg(0 * ios::beg);
+        x = newMassiv(size);
+        for (int i = 0; i < size; i++) {
+            f.read((char*)&x[i], sizeof(people));
+        }
+        N = size;
+        f.close();
+    }
+    else {
+        cout << "file is not open for reading..." << endl;
+    }
+}
+void recreateFile(people* x, int N, string& file) {
+    fstream f;
+    f.open(file, ios_base::out | ios_base::binary);
+    if (f.is_open()) {
+        for (int i = 0; i < N; i++) {
+            f.write((char*)&x[i], sizeof(people));
+        }
+        cout << "file is recreated..." << endl;
+        f.close();
+    }
+    else {
+        cout << "file is not open for writing..." << endl;
+    }
+}
+// Основное меню работы с записями
+void print(string& file) {
+    int num;
+    int N = 0;
+    people* x = nullptr;
+    // При старте пытаемся загрузить данные из бинарного файла
+    readFile(x, N, file);
+    do {
+        input(num, "input case: ");
+        switch (num) {
+            case(1): // Добавление записей
+                if (N == 0) {
+                    input(N, "input n = ");
+                    output(N, "N = ");
+                    x = newMassiv(N);
+                    setPeople(x, N);
+                }
+                else {
+                    int add;
+                    input(add, "input add = ");
+                    addRecords(x, N, add);
+                    output(N, "N = ");
+                    recreateFile(x, N, file);
+                }
+                break;
+            case(2): // Вывод всех записей
+                printPeople(x, N);
+                createFile(x, N, file);
+                break;
+            case(3): // Удалить все записи
+                deleteRecords(x, N);
+                recreateFile(x, N, file);
+                break;
+            case(4): // Сортировка
+                sortRecords(x, N);
+                recreateFile(x, N, file);
+                break;
+            case(5): // Поиск
+                findData(x, N);
+                break;
+            case(6): // Выход с сохранением
+                cout << "Exit" << endl;
+                printPeople(x, N);
+                deleteMassiv(x);
+                _getch();
+                break;
+            default:
+                cout << "Wrong choice" << endl;
+        }
+    } while (num != 6);
+}
+// Вывод таблицы пунктов меню
+void table() {
+    cout << "1. input count of records" << endl;
+    cout << "2. output inputed records" << endl;
+    cout << "3. delete records" << endl;
+    cout << "4. sort records" << endl;
+    cout << "5. find records" << endl;
+    cout << "6. exit" << endl;
+}
+// Главная функция main
 int main() {
-    setlocale(LC_ALL, "Russian");
-    srand(time(0));
-
-    Menu();
-
+    // Подключение псевдогенератора случайных чисел
+    srand(time(NULL));
+    string part = "D:\\C++\\";
+    string name = "people.bin";
+    string filename = part + name;
+    table();
+    print(filename);
     return 0;
 }
