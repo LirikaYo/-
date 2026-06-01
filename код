@@ -6,76 +6,61 @@
 using namespace std;
 
 struct Worker {
-    string Fam;
-    string Name;
-    string Otch;
-    string workshop;
-    int quantity;
-    char category;
+	string Fam;
+	string Name;
+	string Otch;
+	string workshop;
+	int quantity;
+	char category;
 };
 
 string generateFam() {
-    string Fam[] = {
-        "Ivanov", "Petrov", "Sidorov", "Kuznetsov",
-        "Sokolov", "Mikhailov", "Fedorov", "Morozov"
-    };
-    return Fam[rand() % 8];
+	string Fam[] = {
+		"Ivanov", "Petrov", "Sidorov", "Kuznetsov", "Sokolov", "Mikhailov", "Fedorov", "Morozov"};
+	return Fam[rand() % 8];
 }
 
 string generateName() {
-    string Name[] = {
-        "Alexey", "Dmitry", "Vladimir", "Sergey",
-        "Andrey", "Ivan", "Maxim", "Egor"
-    };
-    return Name[rand() % 8];
+	string Name[] = {
+		"Alexey", "Dmitry", "Vladimir", "Sergey", "Andrey", "Ivan", "Maxim", "Egor"};
+	return Name[rand() % 8];
 }
 
 string generateOtch() {
-    string Otch[] = {
-        "Alexeyevich", "Dmitrievich", "Vladimirovich",
-        "Sergeevich", "Andreevich", "Ivanovich",
-        "Maximovich", "Egorovich"
-    };
-    return Otch[rand() % 8];
+	string Otch[] = {
+		"Alexeyevich", "Dmitrievich", "Vladimirovich", "Sergeevich", "Andreevich", "Ivanovich", "Maximovich", "Egorovich"};
+	return Otch[rand() % 8];
 }
 
 string generateWorkshop() {
-    string workshops[] = {
-        "Цех №1", "Цех №2", "Цех №3",
-        "Цех №4", "Цех №5"
-    };
-    return workshops[rand() % 5];
+	string workshops[] = {
+		"Цех №1", "Цех №2", "Цех №3", "Цех №4", "Цех №5"};
+	return workshops[rand() % 5];
 }
 
 char generateCategory() {
-    char categories[] = { 'A', 'B', 'C' };
-    return categories[rand() % 3];
+	char categories[] = { 'A', 'B', 'C' };
+	return categories[rand() % 3];
 }
 
 void generateRecord(Worker& x) {
-    x.Fam = generateFam();
-    x.Name = generateName();
-    x.Otch = generateOtch();
-    x.workshop = generateWorkshop();
-    x.quantity = rand() % 100 + 1;
-    x.category = generateCategory();
+	x.Fam = generateFam();
+	x.Name = generateName();
+	x.Otch = generateOtch();
+	x.workshop = generateWorkshop();
+	x.quantity = rand() % 100 + 1;
+	x.category = generateCategory();
 }
 
 void oneWorker(const Worker& w, int index) {
-    cout << index + 1 << ". "
-         << w.Fam << " "
-         << w.Name << " "
-         << w.Otch
-         << ", Цех: " << w.workshop
-         << ", Количество: " << w.quantity
-         << ", Категория: " << w.category
-         << endl;
-}
-void writeString(fstream& f, const string& s) {
-    int len = s.length();
-
-    f.write((char*)&len, sizeof(len));
-    f.write(s.c_str(), len);
+	cout << index + 1 << ". "
+		<< w.Fam << " "
+		<< w.Name << " "
+		<< w.Otch
+		<< ", Цех: " << w.workshop
+		<< ", Количество: " << w.quantity
+		<< ", Категория: " << w.category
+		<< endl;
 }
 void vivodAll(Worker* workers, int size) {
 	if (size == 0) {
@@ -87,52 +72,6 @@ void vivodAll(Worker* workers, int size) {
 		oneWorker(workers[i], i);
 	}
 	cout << "=================================" << endl;
-}
-string readString(fstream& f) {
-    int len;
-
-    f.read((char*)&len, sizeof(len));
-
-    string s(len, ' ');
-
-    f.read(&s[0], len);
-
-    return s;
-}
-void load(const string& filename, Worker*& workers, int& size) {
-    string path = "D:\\333\\";
-    string file = path + filename;
-
-    fstream f;
-    f.open(file, ios::in | ios::binary);
-
-    if (f.is_open()) {
-
-        f.read((char*)&size, sizeof(size));
-
-        workers = new Worker[size];
-
-        for (int i = 0; i < size; i++) {
-
-            workers[i].Fam = readString(f);
-            workers[i].Name = readString(f);
-            workers[i].Otch = readString(f);
-            workers[i].workshop = readString(f);
-
-            f.read((char*)&workers[i].quantity,
-                   sizeof(workers[i].quantity));
-
-            f.read((char*)&workers[i].category,
-                   sizeof(workers[i].category));
-        }
-
-        f.close();
-
-        cout << "data is loaded..." << endl;
-    }
-    else {
-        cout << "file is not open for reading..." << endl;
-    }
 }
 
 void deleteRecord(Worker*& workers, int& size, int index) {
@@ -209,41 +148,92 @@ void addRecords(Worker*& workers, int& size, int addSize) {
 	cout << "Добавлено " << addSize << " записей! Всего: " << size << endl;
 }
 
+void writeString(fstream& f, const string& s) {
+	int len = s.length();
+	f.write((char*)&len, sizeof(len));
+}
+
 void save(const string& filename, Worker* workers, int size) {
-    string path = "D:\\333\\";
-    string file = path + filename;
+	string path = "D:\\333\\";
+	string file = path + filename;
 
-    fstream f;
+	fstream f;
 
-    f.open(file, ios::out | ios::binary);
+	f.open(file, ios::out | ios::binary);
 
-    if (f.is_open()) {
+	if (f.is_open()) {
 
-        cout << "file is open for writing..." << endl;
+		cout << "file is open for writing..." << endl;
 
-        f.write((char*)&size, sizeof(size));
+		f.write((char*)&size, sizeof(size));
 
-        for (int i = 0; i < size; i++) {
+		for (int i = 0; i < size; i++) {
 
-            writeString(f, workers[i].Fam);
-            writeString(f, workers[i].Name);
-            writeString(f, workers[i].Otch);
-            writeString(f, workers[i].workshop);
+			writeString(f, workers[i].Fam);
+			writeString(f, workers[i].Name);
+			writeString(f, workers[i].Otch);
+			writeString(f, workers[i].workshop);
 
-            f.write((char*)&workers[i].quantity,
-                    sizeof(workers[i].quantity));
+			f.write((char*)&workers[i].quantity,
+				sizeof(workers[i].quantity));
 
-            f.write((char*)&workers[i].category,
-                    sizeof(workers[i].category));
-        }
+			f.write((char*)&workers[i].category,
+				sizeof(workers[i].category));
+		}
 
-        cout << "data is added..." << endl;
+		cout << "data is added..." << endl;
 
-        f.close();
-    }
-    else {
-        cout << "file is not open for writing..." << endl;
-    }
+		f.close();
+	}
+	else {
+		cout << "file is not open for writing..." << endl;
+	}
+}
+string readString(fstream& f) {
+	int len;
+
+	f.read((char*)&len, sizeof(len));
+
+	string s(len, ' ');
+
+	f.read(&s[0], len);
+
+	return s;
+}
+void load(const string& filename, Worker*& workers, int& size) {
+	string path = "D:\\333\\";
+	string file = path + filename;
+
+	fstream f;
+	f.open(file, ios::in | ios::binary);
+
+	if (f.is_open()) {
+
+		f.read((char*)&size, sizeof(size));
+
+		workers = new Worker[size];
+
+		for (int i = 0; i < size; i++) {
+
+			workers[i].Fam = readString(f);
+			workers[i].Name = readString(f);
+			workers[i].Otch = readString(f);
+			workers[i].workshop = readString(f);
+
+			f.read((char*)&workers[i].quantity,
+				sizeof(workers[i].quantity));
+
+			f.read((char*)&workers[i].category,
+				sizeof(workers[i].category));
+		}
+
+		f.close();
+
+		cout << "data is loaded..." << endl;
+	}
+	else {
+		cout << "file is not open for reading..." << endl;
+	}
 }
 
 void showMenu() {
@@ -310,7 +300,7 @@ void menu(Worker*& workers, int& size) {
 			vivodAll(workers, size);
 			break;
 		}
-		case 6:
+		case 6:{
 			if (size == 0) {
 				cout << "Нет записей для сохранения!" << endl;
 			}
@@ -319,11 +309,24 @@ void menu(Worker*& workers, int& size) {
 				break;
 			}
 			break;
-		case 0:
+		}
+		case 7:{
+			delete[] workers;
+			workers = nullptr;
+			size = 0;
+
+			load("workers.bin", workers, size);
+
+			vivodAll(workers, size);
+
+			break;
+		}
+		case 0:{
 			cout << "Программа завершена!" << endl;
 			break;
 		default:
 			cout << "Неверный выбор!" << endl;
+			}
 		}
 	} while (choice != 0);
 }
