@@ -244,6 +244,7 @@ void showMenu() {
 	cout << "4. Поиск записи по фамилии" << endl;
 	cout << "5. Сортировка записей по количеству изделий" << endl;
 	cout << "6. Сохранить в бинарный файл" << endl;
+	cout << "7. Загрузить" << endl;
 	cout << "0. Выход" << endl;
 	cout << "Ваш выбор: ";
 }
@@ -324,9 +325,9 @@ void menu(Worker*& workers, int& size) {
 		case 0:{
 			cout << "Программа завершена!" << endl;
 			break;
+		}
 		default:
 			cout << "Неверный выбор!" << endl;
-			}
 		}
 	} while (choice != 0);
 }
