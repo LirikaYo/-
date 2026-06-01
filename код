@@ -158,22 +158,40 @@ void addRecords(Worker*& workers, int& size, int addSize) {
 }
 
 void save(const string& filename, Worker* workers, int size) {
-	string path = "D:\\333\\";
-	string file = path + filename;
-	fstream f;
+    string path = "D:\\333\\";
+    string file = path + filename;
 
-	f.open(file, ios_base::out | ios_base::binary);
+    fstream f;
 
-	if (f.is_open()) {
-		cout << "file is open for writing..." << endl;
-		f.write((char*)&size, sizeof(int));
-		f.write((char*)workers, sizeof(Worker) * size);
-		cout << "data is added..." << endl;
-		f.close();
-	}
-	else {
-		cout << "file is not for writing..." << endl;
-	}
+    f.open(file, ios::out | ios::binary);
+
+    if (f.is_open()) {
+
+        cout << "file is open for writing..." << endl;
+
+        f.write((char*)&size, sizeof(size));
+
+        for (int i = 0; i < size; i++) {
+
+            writeString(f, workers[i].Fam);
+            writeString(f, workers[i].Name);
+            writeString(f, workers[i].Otch);
+            writeString(f, workers[i].workshop);
+
+            f.write((char*)&workers[i].quantity,
+                    sizeof(workers[i].quantity));
+
+            f.write((char*)&workers[i].category,
+                    sizeof(workers[i].category));
+        }
+
+        cout << "data is added..." << endl;
+
+        f.close();
+    }
+    else {
+        cout << "file is not open for writing..." << endl;
+    }
 }
 
 void showMenu() {
