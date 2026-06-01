@@ -27,22 +27,26 @@ struct Worker {
 };
 
 string generateFam() {
-    string Fam[] = { "Иванов", "Петров", "Сидоров", "Кузнецов", "Соколов", "Михайлов", "Федоров", "Морозов" };
+    string Fam[] = {
+        "Ivanov", "Petrov", "Sidorov", "Kuznetsov", "Sokolov", "Mikhailov", "Fedorov", "Morozov" };
     return Fam[rand() % 8];
 }
 
 string generateName() {
-    string Name[] = { "Алексей", "Дмитрий", "Владимир", "Сергей", "Андрей", "Иван", "Максим", "Егор" };
+    string Name[] = {
+        "Alexey", "Dmitry", "Vladimir", "Sergey", "Andrey", "Ivan", "Maxim", "Egor" };
     return Name[rand() % 8];
 }
 
 string generateOtch() {
-    string Otch[] = { "Алексеевич", "Дмитриевич", "Владимирович", "Сергеевич", "Андреевич", "Иванович", "Максимович", "Егорович" };
+    string Otch[] = {
+        "Alexeyevich", "Dmitrievich", "Vladimirovich", "Sergeevich", "Andreevich", "Ivanovich", "Maximovich", "Egorovich" };
     return Otch[rand() % 8];
 }
 
 string generateWorkshop() {
-    string workshops[] = { "Цех №1", "Цех №2", "Цех №3", "Цех №4", "Цех №5" };
+    string workshops[] = {
+        "Цех №1", "Цех №2", "Цех №3", "Цех №4", "Цех №5" };
     return workshops[rand() % 5];
 }
 
@@ -73,6 +77,10 @@ void printOneWorker(Worker& x) {
 }
 
 void printWorkers(Worker* x, int count) {
+    if (count == 0) {
+        cout << "Записей нет" << endl;
+        return;
+    }
     for (int i = 0; i < count; i++) {
         printOneWorker(x[i]);
     }
@@ -100,58 +108,13 @@ void addRecords(Worker*& x, int& N, int add) {
 }
 
 void deleteRecords(Worker*& x, int& N) {
+    if (N == 0) {
+        cout << "Записей нет" << endl;
+        return;
+    }
     deleteMassiv(x);
     N = 0;
     cout << "записи удалены" << endl;
-}
-
-void drk(int& a) {
-    do {
-        input(a, "введите выбор: ");
-        if (a < 1)
-            cout << "повторите ваш выбор" << endl;
-        if (a > 7)
-            cout << "повторите ваш выбор" << endl;
-    } while (a < 1 || a > 7);
-    cout << "продолжаем..." << endl;
-}
-
-template <typename example>
-void funcFindData(Worker* x, int N, example Worker::* a, string s) {
-    example b;
-    input(b, s);
-    for (int i = 0; i < N; i++) {
-        if (x[i].*a == b)
-            printOneWorker(x[i]);
-    }
-}
-
-void findData(Worker* x, int N) {
-    int choice;
-    cout << "1. Фамилия" << " " << "2. Имя" << " " << "3. Отчество" << " " << "4. Цех" << " " << "5. Категория" << " " << "6. Количество" << endl;
-    drk(choice);
-    switch (choice) {
-    case(1):
-        funcFindData(x, N, &Worker::Fam, "введите Фамилию = ");
-        break;
-    case(2):
-        funcFindData(x, N, &Worker::Name, "введите Имя = ");
-        break;
-    case(3):
-        funcFindData(x, N, &Worker::Otch, "введите Отчество = ");
-        break;
-    case(4):
-        funcFindData(x, N, &Worker::workshop, "введите Цех = ");
-        break;
-    case(5):
-        funcFindData(x, N, &Worker::category, "введите Категорию = ");
-        break;
-    case(6):
-        funcFindData(x, N, &Worker::quantity, "введите Количество = ");
-        break;
-    default:
-        cout << "Неверный выбор" << endl;
-    }
 }
 
 void tmpRecords(Worker& a, Worker& b) {
@@ -160,13 +123,16 @@ void tmpRecords(Worker& a, Worker& b) {
     b = tmp;
 }
 
-template <typename example>
-void funcSortRecords(Worker* x, int N, example Worker::* a) {
+void sortByFam(Worker* x, int N) {
+    if (N == 0) {
+        cout << "Фамилий нет" << endl;
+        return;
+    }
     bool flag;
     for (int i = 0; i < N; i++) {
         flag = true;
         for (int j = 0; j < N - 1; j++) {
-            if (x[j].*a > x[j + 1].*a) {
+            if (x[j].Fam > x[j + 1].Fam) {
                 flag = false;
                 tmpRecords(x[j], x[j + 1]);
             }
@@ -174,46 +140,37 @@ void funcSortRecords(Worker* x, int N, example Worker::* a) {
         if (flag)
             break;
     }
-}
-
-void sortRecords(Worker* x, int N) {
-    int choice;
-    cout << "1. Фамилия" << " " << "2. Имя" << " " << "3. Отчество" << " " << "4. Цех" << " " << "5. Категория" << " " << "6. Количество" << endl;
-    drk(choice);
-    switch (choice) {
-    case(1):
-        funcSortRecords(x, N, &Worker::Fam);
-        break;
-    case(2):
-        funcSortRecords(x, N, &Worker::Name);
-        break;
-    case(3):
-        funcSortRecords(x, N, &Worker::Otch);
-        break;
-    case(4):
-        funcSortRecords(x, N, &Worker::workshop);
-        break;
-    case(5):
-        funcSortRecords(x, N, &Worker::category);
-        break;
-    case(6):
-        funcSortRecords(x, N, &Worker::quantity);
-        break;
-    default:
-        cout << "Неверный выбор" << endl;
-    }
+    cout << "\n=== Отсортированные по фамилиям записи ===" << endl;
     printWorkers(x, N);
 }
+
+void findData(Worker* x, int N) {
+    if (N == 0) {
+        cout << "Фамилий нет..." << endl;
+        return;
+    }
+    string fam;
+    input(fam, "введите Фамилию для поиска = ");
+    bool famil = false;
+    for (int i = 0; i < N; i++) {
+        if (x[i].Fam == fam){
+            printOneWorker(x[i]);
+        famil = true;
+    }
+}
+    if (!famil) {
+        cout << "фамилия " << fam << " не найдена" << endl;
+    }
+}
+
 
 void createFile(Worker* x, int N, string& file) {
     fstream f;
     f.open(file, ios_base::out | ios_base::binary);
     if (f.is_open()) {
-        cout << "файл открыт для записи..." << endl;
         for (int i = 0; i < N; i++) {
             f.write((char*)&x[i], sizeof(Worker));
         }
-        cout << "данные добавлены..." << endl;
         f.close();
     }
     else {
@@ -248,7 +205,6 @@ void recreateFile(Worker* x, int N, string& file) {
         for (int i = 0; i < N; i++) {
             f.write((char*)&x[i], sizeof(Worker));
         }
-        cout << "файл пересоздан..." << endl;
         f.close();
     }
     else {
@@ -264,7 +220,17 @@ void print(string& file) {
     readFile(x, N, file);
 
     do {
-        input(num, "введите номер: ");
+        cout << "\n========== МЕНЮ ==========" << endl;
+        cout << "1. Добавить записи" << endl;
+        cout << "2. Показать все записи" << endl;
+        cout << "3. Удалить все записи" << endl;
+        cout << "4. Сортировка по фамилиям" << endl;
+        cout << "5. Поиск по фамилии" << endl;
+        cout << "0. Выход" << endl;
+        cout << "Ваш выбор: ";
+
+        input(num, "");
+
         switch (num) {
         case(1):
             if (N == 0) {
@@ -272,6 +238,7 @@ void print(string& file) {
                 output(N, "N = ");
                 x = newMassiv(N);
                 setWorkers(x, N);
+                createFile(x, N, file);
             }
             else {
                 int add;
@@ -290,7 +257,7 @@ void print(string& file) {
             recreateFile(x, N, file);
             break;
         case(4):
-            sortRecords(x, N);
+            sortByFam(x, N);  
             recreateFile(x, N, file);
             break;
         case(5):
@@ -304,18 +271,7 @@ void print(string& file) {
         default:
             cout << "Неверный выбор" << endl;
         }
-    } while (num != 6);
-}
-
-void showMenu() {
-    cout << "\n========== МЕНЮ ==========" << endl;
-    cout << "1. Добавить записи" << endl;
-    cout << "2. Показать все записи" << endl;
-    cout << "3. Удалить запись" << endl;
-    cout << "4. Поиск записи по фамилии" << endl;
-    cout << "5. Сортировка записей по количеству изделий" << endl;
-    cout << "0. Выход" << endl;
-    cout << "Ваш выбор: ";
+    } while (num != 0);
 }
 
 int main() {
@@ -324,7 +280,6 @@ int main() {
     string part = "D:\\333\\";
     string name = "workers.bin";
     string filename = part + name;
-    showMenu();
     print(filename);
     return 0;
 }
