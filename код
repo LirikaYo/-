@@ -6,77 +6,71 @@
 using namespace std;
 
 struct Worker {
-	char Fam[50];
-	char Name[50];
-	char Otch[50];
-	char workshop[50];
-	int quantity;
-	char category;
+    string Fam;
+    string Name;
+    string Otch;
+    string workshop;
+    int quantity;
+    char category;
 };
 
 string generateFam() {
-	string Fam[] = { "Ivanov", "Petrov", "Sidorov", "Kuznetsov", "Sokolov", "Mikhailov", "Fedorov", "Morozov" };
-	return Fam[rand() % 8];
+    string Fam[] = {
+        "Ivanov", "Petrov", "Sidorov", "Kuznetsov",
+        "Sokolov", "Mikhailov", "Fedorov", "Morozov"
+    };
+    return Fam[rand() % 8];
 }
 
 string generateName() {
-	string Name[] = { "Alexey", "Dmitry", "Vladimir", "Sergey", "Andrey", "Ivan", "Maxim", "Egor" };
-	return Name[rand() % 8];
+    string Name[] = {
+        "Alexey", "Dmitry", "Vladimir", "Sergey",
+        "Andrey", "Ivan", "Maxim", "Egor"
+    };
+    return Name[rand() % 8];
 }
 
 string generateOtch() {
-	string Otch[] = { "Alexeyevich", "Dmitrievich", "Vladimirovich", "Sergeevich", "Andreevich", "Ivanovich", "Maximovich", "Egorovich" };
-	return Otch[rand() % 8];
+    string Otch[] = {
+        "Alexeyevich", "Dmitrievich", "Vladimirovich",
+        "Sergeevich", "Andreevich", "Ivanovich",
+        "Maximovich", "Egorovich"
+    };
+    return Otch[rand() % 8];
 }
 
 string generateWorkshop() {
-	string workshops[] = { "Цех №1", "Цех №2", "Цех №3", "Цех №4", "Цех №5" };
-	return workshops[rand() % 5];
+    string workshops[] = {
+        "Цех №1", "Цех №2", "Цех №3",
+        "Цех №4", "Цех №5"
+    };
+    return workshops[rand() % 5];
 }
 
 char generateCategory() {
-	char categories[] = { 'A', 'B', 'C' };
-	return categories[rand() % 3];
+    char categories[] = { 'A', 'B', 'C' };
+    return categories[rand() % 3];
 }
 
 void generateRecord(Worker& x) {
-	string fam = generateFam();
-	string name = generateName();
-	string otch = generateOtch();
-	string workshop = generateWorkshop();
-
-	for (size_t i = 0; i < fam.length() && i < 49; i++) {
-		x.Fam[i] = fam[i];
-	}
-	x.Fam[fam.length()] = '\0';
-
-	for (size_t i = 0; i < name.length() && i < 49; i++) {
-		x.Name[i] = name[i];
-	}
-	x.Name[name.length()] = '\0';
-
-	for (size_t i = 0; i < otch.length() && i < 49; i++) {
-		x.Otch[i] = otch[i];
-	}
-	x.Otch[otch.length()] = '\0';
-
-	for (size_t i = 0; i < workshop.length() && i < 49; i++) {
-		x.workshop[i] = workshop[i];
-	}
-	x.workshop[workshop.length()] = '\0';
-
-	x.quantity = rand() % 100 + 1;
-	x.category = generateCategory();
+    x.Fam = generateFam();
+    x.Name = generateName();
+    x.Otch = generateOtch();
+    x.workshop = generateWorkshop();
+    x.quantity = rand() % 100 + 1;
+    x.category = generateCategory();
 }
 
 void oneWorker(const Worker& w, int index) {
-	cout << index + 1 << ". "
-		<< w.Fam << " " << w.Name << " " << w.Otch
-		<< ", Цех: " << w.workshop
-		<< ", Количество: " << w.quantity
-		<< ", Категория: " << w.category << endl;
+    cout << index + 1 << ". "
+         << w.Fam << " "
+         << w.Name << " "
+         << w.Otch
+         << ", Цех: " << w.workshop
+         << ", Количество: " << w.quantity
+         << ", Категория: " << w.category
+         << endl;
 }
-
 void vivodAll(Worker* workers, int size) {
 	if (size == 0) {
 		cout << "Нет записей!" << endl;
