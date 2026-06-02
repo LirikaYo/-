@@ -141,7 +141,6 @@ void sortByFam(Worker* x, int N) {
             break;
     }
     cout << "\n=== Отсортированные по фамилиям записи ===" << endl;
-    printWorkers(x, N);
 }
 
 void findData(Worker* x, int N) {
@@ -153,11 +152,11 @@ void findData(Worker* x, int N) {
     input(fam, "введите Фамилию для поиска = ");
     bool famil = false;
     for (int i = 0; i < N; i++) {
-        if (x[i].Fam == fam){
+        if (x[i].Fam == fam) {
             printOneWorker(x[i]);
-        famil = true;
+            famil = true;
+        }
     }
-}
     if (!famil) {
         cout << "фамилия " << fam << " не найдена" << endl;
     }
@@ -257,8 +256,9 @@ void print(string& file) {
             recreateFile(x, N, file);
             break;
         case(4):
-            sortByFam(x, N);  
+            sortByFam(x, N);
             recreateFile(x, N, file);
+            printWorkers(x, N);
             break;
         case(5):
             findData(x, N);
