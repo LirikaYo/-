@@ -77,6 +77,10 @@ void printOneWorker(Worker& x) {
 }
 
 void printWorkers(Worker* x, int count) {
+    if (count == 0) {
+        cout << "Записей нет" << endl;
+        return;
+    }
     for (int i = 0; i < count; i++) {
         printOneWorker(x[i]);
     }
@@ -104,6 +108,10 @@ void addRecords(Worker*& x, int& N, int add) {
 }
 
 void deleteRecords(Worker*& x, int& N) {
+    if (N == 0) {
+        cout << "Записей нет" << endl;
+        return;
+    }
     deleteMassiv(x);
     N = 0;
     cout << "записи удалены" << endl;
@@ -116,6 +124,10 @@ void tmpRecords(Worker& a, Worker& b) {
 }
 
 void sortByFam(Worker* x, int N) {
+    if (N == 0) {
+        cout << "Фамилий нет" << endl;
+        return;
+    }
     bool flag;
     for (int i = 0; i < N; i++) {
         flag = true;
@@ -133,23 +145,32 @@ void sortByFam(Worker* x, int N) {
 }
 
 void findData(Worker* x, int N) {
+    if (N == 0) {
+        cout << "Фамилий нет..." << endl;
+        return;
+    }
     string fam;
     input(fam, "введите Фамилию для поиска = ");
+    bool famil = false;
     for (int i = 0; i < N; i++) {
-        if (x[i].Fam == fam)
+        if (x[i].Fam == fam) {
             printOneWorker(x[i]);
+            famil = true;
+        }
+    }
+    if (!famil) {
+        cout << "фамилия " << fam << " не найдена" << endl;
     }
 }
+
 
 void createFile(Worker* x, int N, string& file) {
     fstream f;
     f.open(file, ios_base::out | ios_base::binary);
     if (f.is_open()) {
-        cout << "файл открыт для записи..." << endl;
         for (int i = 0; i < N; i++) {
             f.write((char*)&x[i], sizeof(Worker));
         }
-        cout << "данные добавлены..." << endl;
         f.close();
     }
     else {
@@ -165,6 +186,9 @@ void readFile(Worker* x, int N, string& file) {
         f.seekg(0, ios::end);
         int size = f.tellg() / sizeof(Worker);
         f.seekg(0, ios::beg);
+        if (x!= nullptr) {
+            deleteMassiv(x);
+        }
         x = newMassiv(size);
         for (int i = 0; i < size; i++) {
             f.read((char*)&x[i], sizeof(Worker));
@@ -184,7 +208,6 @@ void recreateFile(Worker* x, int N, string& file) {
         for (int i = 0; i < N; i++) {
             f.write((char*)&x[i], sizeof(Worker));
         }
-        cout << "файл пересоздан..." << endl;
         f.close();
     }
     else {
@@ -218,6 +241,7 @@ void print(string& file) {
                 output(N, "N = ");
                 x = newMassiv(N);
                 setWorkers(x, N);
+                createFile(x, N, file);
             }
             else {
                 int add;
@@ -229,14 +253,14 @@ void print(string& file) {
             break;
         case(2):
             printWorkers(x, N);
-            createFile(x, N, file);
+           // createFile(x, N, file);
             break;
         case(3):
             deleteRecords(x, N);
             recreateFile(x, N, file);
             break;
         case(4):
-            sortByFam(x, N);  
+            sortByFam(x, N);
             recreateFile(x, N, file);
             break;
         case(5):
