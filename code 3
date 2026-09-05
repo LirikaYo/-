@@ -1,0 +1,198 @@
+#include<iostream>
+#include<string>
+#include<ctime>
+
+using namespace std;
+
+struct Student {
+	string Fam;
+	string Name;
+	string Otch;
+	int Course;          
+	string Group;        
+	double Sr_Ycpev;     
+};
+
+template<typename example>
+void input(example& x, string msg) {
+	cout << msg;
+	cin >> x;
+}
+
+string generateGroup() {
+	string Groups[] = { "AA-11", "AA-21", "AA-31", "AA-41" "AБ-12", "АБ-22", "АБ-32", "АБ-42", "АВ-11", "АВ-12" };
+	return Groups[rand() % 10];
+}
+
+string generateFam() {
+	string Fam[] = { "Иванов", "Романов", "Александров", "Смирнов", "Киселев", "Гагарин", "Казаковцев", "Гаврилов", "Михайлов", "Сидоркин" };
+	return Fam[rand() % 10];
+}
+
+string generateName() {
+	string Name[] = { "Александр", "Михаил", "Максим", "Илья", "Юра", "Кирилл", "Даниил", "Тимур", "Ваня", "Коля" };
+	return Name[rand() % 10];
+}
+
+string generateOtch() {
+	string Otch[] = { "Алексеевич", "Александрович", "Максимович", "Иванович", "Михайлович", "Сергеевич", "Андреевич", "Артемович", "Никитич", "Ильич" };
+	return Otch[rand() % 10];
+}
+
+double generateSr_Ycpev() {
+	return 2.0 + (rand() % 31) * 0.1;
+}
+
+Student* createArray(int size) {
+	Student* x = new Student[size];
+	return x;
+}
+
+void generateRecord(Student& x) {
+	x.Fam = generateFam();
+	x.Name = generateName();
+	x.Otch = generateOtch();
+	x.Course = 1 + rand() % 4; 
+	x.Group = generateGroup();
+	x.Sr_Ycpev = generateSr_Ycpev();
+}
+
+void generateMass(Student* one, int startIndex, int newSize) {
+	for (int i = startIndex; i < startIndex + newSize; i++) {
+		generateRecord(one[i]);
+	}
+}
+
+void printRecord(Student x, int index) {
+	cout << index + 1 << ". " << x.Fam << " " << x.Name << " " << x.Otch << ", Курс: " << x.Course << ", Группа: " << x.Group << ", Ср. балл: " << x.Sr_Ycpev << endl;
+}
+
+void printMass(Student* one, int size) {
+	if (size == 0) {
+		cout << "Нет записей о студентах!" << endl;
+		return;
+	}
+	cout << "\n=== СПИСОК СТУДЕНТОВ ===\n";
+	for (int i = 0; i < size; i++) {
+		printRecord(one[i], i);
+	}
+	cout << "========================\n\n";
+}
+
+void searchOtlich(Student* one, int size, int searchCourse) {
+	if (size == 0) {
+		cout << "База данных пуста..." << endl;
+		return;
+	}
+
+	cout << "\n=== Результат поиска ===\n";
+	cout << "Отличники " << searchCourse << "-го курса (Ср. балл = 5.0):\n";
+
+	bool found = false;
+	int counter = 0;
+
+	for (int i = 0; i < size; i++) {
+		if (one[i].Course == searchCourse && one[i].Sr_Ycpev == 5.0) {
+			counter++;
+			cout << counter << ") " << one[i].Fam << " " << one[i].Name << " " << one[i].Otch << " (Группа: " << one[i].Group << ")" << endl;
+			found = true;
+		}
+	}
+
+	if (!found) {
+		cout << "На " << searchCourse << " курсе отличников не обнаружено." << endl;
+	}
+	cout << "========================\n\n";
+}
+
+void deleteArray(Student*& x) {
+	delete[] x;
+	x = nullptr;
+}
+
+Student* resizeArray(Student* oldArray, int oldSize, int addSize) {
+	Student* newArray = createArray(oldSize + addSize);
+
+	for (int i = 0; i < oldSize; i++) {
+		newArray[i] = oldArray[i];
+	}
+
+	deleteArray(oldArray);
+
+	return newArray;
+}
+
+void Menu() {
+	Student* students = nullptr;
+	int currentSize = 0;
+	int choice;
+
+	do {
+		cout << "\n=== МЕНЮ ПРОГРАММЫ ===\n";
+		cout << "1. Добавить записи о студентах\n";
+		cout << "2. Вывести информацию о всех студентах\n";
+		cout << "3. Вывести список отличников указанного курса\n";
+		cout << "0. Выход\n";
+		cout << "Ваш выбор: ";
+		input(choice, "");
+
+		switch (choice) {
+		case 1: {
+			int addSize;
+			input(addSize, "Введите количество записей для добавления: ");
+
+			if (addSize <= 0) {
+				cout << "Количество записей должно быть положительным!" << endl;
+				break;
+			}
+
+			if (students == nullptr) {
+				students = createArray(addSize);
+				generateMass(students, 0, addSize);
+				currentSize = addSize;
+				cout << "Добавлено " << addSize << " записей!" << endl;
+			}
+			else {
+				Student* newStudents = resizeArray(students, currentSize, addSize);
+				students = newStudents;
+				generateMass(students, currentSize, addSize);
+				currentSize += addSize;
+				cout << "Добавлено еще " << addSize << " записей! Всего записей: " << currentSize << endl;
+			}
+			break;
+		}
+		case 2: {
+			printMass(students, currentSize);
+			break;
+		}
+		case 3: {
+			int targetCourse;
+			input(targetCourse, "Введите номер курса для поиска отличников (1-4): ");
+
+			searchOtlich(students, currentSize, targetCourse);
+			break;
+		}
+		case 0: {
+			cout << "Выход из программы..." << endl;
+			break;
+		}
+		default: {
+			cout << "Неверный выбор! Попробуйте снова." << endl;
+			break;
+		}
+		}
+	} while (choice != 0);
+
+	if (students != nullptr) {
+		deleteArray(students);
+	}
+}
+
+int main() {
+	setlocale(LC_ALL, "Russian");
+	srand(time(0));
+
+	Menu();
+
+	return 0;
+}
