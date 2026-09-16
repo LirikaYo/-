@@ -1,0 +1,75 @@
+#include <iostream>
+#include <string>
+#include <locale>
+#include <conio.h>
+#include <ctime>
+
+using namespace std;
+
+template<typename example>
+void vvod(example& x, string s){
+	cout << s;
+	cin >> x;
+}
+
+template<typename example>
+void vivod(example& x, string s){
+	cout << s << x << endl;
+}
+
+void prover(int& x){
+	do {
+		cout << "Введите размер массива(не более 100): ";
+		vvod(x, "");
+		if (x >= 100) {
+			cout << "Введите правильные размеры!\n";
+		}
+	} while (x >= 100);
+}
+
+void mass(int* arr, int n){
+	for (int i = 0; i < n; i++) {
+		arr[i] = rand() % 100 - 50; 
+		cout << arr[i] << " ";
+	}
+	cout << endl;
+}
+
+void chiska(int* arr, int n, int& chet, int& otric){
+	chet = 0;
+	otric = 0;
+
+	for (int i = 0; i < n; i++){
+		if (arr[i] < 0) {
+			otric += arr[i];
+		}
+		if ((i + 1) % 2 == 0){
+			chet += arr[i];
+		}
+	}
+}
+
+int main(){
+	setlocale(LC_ALL, "RU");
+	srand(time(NULL));
+
+	int n = 0;
+	int chet = 0;
+	int otric = 0;
+
+	prover(n);
+	
+	int* arr = new int[n];
+
+	mass(arr, n);
+	chiska(arr, n, chet, otric);
+	vivod(n, "Введенные данные: ");
+
+	vivod(chet, "Сумма четных: ");
+	vivod(otric, "Сумма отрицательных: ");
+
+	delete[] arr;
+
+	_getch();
+	return 0;
+}
