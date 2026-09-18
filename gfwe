@@ -6,15 +6,25 @@
 
 using namespace std;
 
+template<typename example>
+void prover(example& x, string s) {
+	do {
+		cout << s;
+		cin >> x;
+
+		if (x <= 0) {
+			cout << "Введите корректные размеры: \n";
+		}
+	} while (x <= 0);
+}
+
 class triangle {
 private:
 	double side, height;
 public:
 	void setRazm() {
-		cout << "Введите размер стороны: ";
-		cin >> side;
-		cout << "Введите размеры высоты: ";
-		cin >> height;
+		prover(side, "Введите размер стороны: ");
+		prover(height, "Введите размер высоты: ");
 	}
 
 	double poiskPlosh() {
@@ -26,44 +36,51 @@ public:
 	}
 
 	void printRazm() {
-		cout << "Длина стороны: " << side << "\nДлина высоты: " << height << "\nПлощадь: " << poiskPlosh() << "\nОбъем: " << poiskObem() << endl;
+		cout << "Длина стороны: " << side << "\nДлина высоты: " << height << "\nПлощадь основания: " << poiskPlosh() << "\nОбъем: " << poiskObem() << endl;
 	}
 
 };
 
-template<typename example> // тут вводим
-void vvod(example& x, string s) {
-	cout << s;
-	cin >> x;
+triangle* chitaem(int& size) {
+	prover(size, "Введите число пирамид: "); 
+	triangle* pyramids = new triangle[size];
+	for (int i = 0; i < size; i++) {
+		pyramids[i].setRazm();
+	}
+	return pyramids;
 }
 
-void prover() { // тут проверяем
-
-}
-
-void chitaem() { // тут у нас известно кол во пирамид и мы считаем площадь и объем
-
-}
-
-void chtoBolshe() { // тут сравниваем полученный результат
-
-}
-
-template<typename example>
-void vivod(example& x, string s) {  // тут выводим
-	cout << s << x << endl;
+void vivod(triangle pyramid, int nomer, string status) {
+	cout << "\nПирамида №" << nomer << " имеет " << status << ":\n";
+	pyramid.printRazm();
 }
 
 
+void chtoBolshe(triangle* pyramids, int size) {
+	int maxPlosh = 0;
+	int maxObem = 0;
+	for (int i = 1; i < size; i++) {
+		if (pyramids[i].poiskPlosh() > pyramids[maxPlosh].poiskPlosh()) {
+			maxPlosh = i;
+		}
+		if (pyramids[i].poiskObem() > pyramids[maxObem].poiskObem()) {
+			maxObem = i;
+		}
+	}
+
+	vivod(pyramids[maxPlosh], maxPlosh + 1, "максимальную площадь основания");
+	vivod(pyramids[maxObem], maxObem + 1, "максимальный объем");
+}
 
 int main() {
 	setlocale(LC_ALL, "RU");
 
-	triangle razm;
+	int size = 0;
+	triangle* pyramids = chitaem(size);
 
-	razm.setRazm();
-	razm.printRazm();
+	chtoBolshe(pyramids, size);
 
+	delete[] pyramids;
 
 	_getch();
 	return 0;
