@@ -1,0 +1,70 @@
+#include<iostream>
+#include<string>
+#include<locale>
+#include<conio.h>
+#include<cmath>
+
+using namespace std;
+
+class triangle {
+private:
+	double side, height;
+public:
+	void setRazm() {
+		cout << "Введите размер стороны: ";
+		cin >> side;
+		cout << "Введите размеры высоты: ";
+		cin >> height;
+	}
+
+	double poiskPlosh() {
+		return ((side * side) * sqrt(3)) / 4;
+	}
+
+	double poiskObem() {
+		return (side * side * height * sqrt(3)) / 12;
+	}
+
+	void printRazm() {
+		cout << "Длина стороны: " << side << "\nДлина высоты: " << height << "\nПлощадь: " << poiskPlosh() << "\nОбъем: " << poiskObem() << endl;
+	}
+
+};
+
+template<typename example> // тут вводим
+void vvod(example& x, string s) {
+	cout << s;
+	cin >> x;
+}
+
+void prover() { // тут проверяем
+
+}
+
+void chitaem() { // тут у нас известно кол во пирамид и мы считаем площадь и объем
+
+}
+
+void chtoBolshe() { // тут сравниваем полученный результат
+
+}
+
+template<typename example>
+void vivod(example& x, string s) {  // тут выводим
+	cout << s << x << endl;
+}
+
+
+
+int main() {
+	setlocale(LC_ALL, "RU");
+
+	triangle razm;
+
+	razm.setRazm();
+	razm.printRazm();
+
+
+	_getch();
+	return 0;
+}
