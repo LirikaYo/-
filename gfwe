@@ -22,6 +22,15 @@ class triangle {
 private:
 	double side, height;
 public:
+	triangle() {
+		side = 0;
+		height = 0;
+	}
+	triangle(double s, double h) {
+		side = s;
+		height = h;
+
+	}
 	void setRazm() {
 		prover(side, "Введите размер стороны: ");
 		prover(height, "Введите размер высоты: ");
@@ -68,8 +77,15 @@ void chtoBolshe(triangle* pyramids, int size) {
 		}
 	}
 
-	vivod(pyramids[maxPlosh], maxPlosh + 1, "максимальную площадь основания");
-	vivod(pyramids[maxObem], maxObem + 1, "максимальный объем");
+	if (pyramids[maxPlosh].poiskPlosh() == pyramids[maxObem].poiskObem()) {
+		cout << "\nМаксимальная площадь основания и объем равны!\n";
+		cout << "Их значение составляет: " << pyramids[maxPlosh].poiskPlosh() << "\n";
+	}
+
+	else {
+		vivod(pyramids[maxPlosh], maxPlosh + 1, "максимальную площадь основания");
+		vivod(pyramids[maxObem], maxObem + 1, "максимальный объем");
+	}
 }
 
 int main() {
