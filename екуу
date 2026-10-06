@@ -1,0 +1,125 @@
+#include<iostream>
+#include<string>
+#include<locale>
+#include<conio.h>
+#include<cmath>
+
+using namespace std;
+
+template<typename example>
+void prover(example& x, string s) {
+	do {
+		cout << s;
+		cin >> x;
+
+		if (x <= 0) {
+			cout << "Введите корректные размеры: \n";
+		}
+	} while (x <= 0);
+}
+
+class triangle {
+private:
+	double side, height;
+public:
+	triangle() {
+		side = 0;
+		height = 0;
+	}
+	triangle(double s, double h) {
+		side = s;
+		height = h;
+
+	}
+	void setRazm() {
+		prover(side, "Введите размер стороны: ");
+		prover(height, "Введите размер высоты: ");
+	}
+
+	double poiskPlosh() {
+		return ((side * side) * sqrt(3)) / 4;
+	}
+
+	double poiskObem() {
+		return (side * side * height * sqrt(3)) / 12;
+	}
+
+	void printRazm() {
+		cout << "Длина стороны: " << side << "\nДлина высоты: " << height << "\nПлощадь основания: " << poiskPlosh() << "\nОбъем: " << poiskObem() << endl;
+	}
+
+};
+
+triangle* chitaem(int& size) {
+	prover(size, "Введите число пирамид: ");
+	triangle* pyramids = new triangle[size];
+	for (int i = 0; i < size; i++) {
+		pyramids[i].setRazm();
+	}
+	return pyramids;
+}
+
+void vivod(triangle pyramid, int nomer, string status) {
+	cout << "\nПирамида №" << nomer << " имеет " << status << ":\n";
+	pyramid.printRazm();
+}
+
+
+void chtoBolshe(triangle* pyramids, int size) {
+	int maxPlosh = 0;
+	int maxObem = 0;
+	for (int i = 1; i < size; i++) {
+		if (pyramids[i].poiskPlosh() > pyramids[maxPlosh].poiskPlosh()) {
+			maxPlosh = i;
+		}
+		if (pyramids[i].poiskObem() > pyramids[maxObem].poiskObem()) {
+			maxObem = i;
+		}
+	}
+	 
+	bool ploshEqual = false;
+	for (int i = 0; i < size; i++) {
+		if (i != maxPlosh && pyramids[i].poiskPlosh() == pyramids[maxPlosh].poiskPlosh()) {
+			ploshEqual = true;
+			break;
+		}
+	}
+
+	bool obemEqual = false;
+	for (int i = 0; i < size; i++) {
+		if (i != maxObem && pyramids[i].poiskObem() == pyramids[maxObem].poiskObem()) {
+			obemEqual = true;
+			break;
+		}
+	}
+
+	if (ploshEqual) {
+		cout << "\nНесколько пирамид имеют максимальную площадь основания, равную "
+			<< pyramids[maxPlosh].poiskPlosh() << "\n";
+	}
+	else {
+		vivod(pyramids[maxPlosh], maxPlosh + 1, "максимальную площадь основания");
+	}
+
+	if (obemEqual) {
+		cout << "\nНесколько пирамид имеют максимальный объем, равный "
+			<< pyramids[maxObem].poiskObem() << "\n";
+	}
+	else {
+		vivod(pyramids[maxObem], maxObem + 1, "максимальный объем");
+	}
+}
+
+int main() {
+	setlocale(LC_ALL, "RU");
+
+	int size = 0;
+	triangle* pyramids = chitaem(size);
+
+	chtoBolshe(pyramids, size);
+
+	delete[] pyramids;
+
+	_getch();
+	return 0;
+}
