@@ -1,75 +1,191 @@
+#define _CRT_SECURE_NO_WARNINGS
 #include <iostream>
-#include <string>
-#include <locale>
-#include <conio.h>
+#include <chrono>
 #include <ctime>
+#include <fstream>
+#include <cstdlib>
+#include <thread>
+#include <iomanip>
+#include <direct.h>
+#include <locale>
 
 using namespace std;
 
-template<typename example>
-void vvod(example& x, string s){
-	cout << s;
-	cin >> x;
+void solve(const int* arr, int n, long long& S1, long long& S2)
+{
+    S1 = 0;
+    S2 = 0;
+    for (int i = 0; i < n; i++)
+    {
+        if (arr[i] < 0)  S1 += arr[i];
+        if (i % 2 == 0)  S2 += arr[i];
+    }
 }
 
-template<typename example>
-void vivod(example& x, string s){
-	cout << s << x << endl;
+void generateArray(int* arr, int n)
+{
+    for (int i = 0; i < n; i++)
+        arr[i] = rand() % 201 - 100;
 }
 
-void prover(int& x){
-	do {
-		cout << "Введите размер массива(не более 100): ";
-		vvod(x, "");
-		if (x >= 100) {
-			cout << "Введите правильные размеры!\n";
-		}
-	} while (x >= 100);
+void printArray(const int* arr, int n)
+{
+    for (int i = 0; i < n; i++)
+        cout << arr[i] << (i + 1 == n ? '\n' : ' ');
 }
 
-void mass(int* arr, int n){
-	for (int i = 0; i < n; i++) {
-		arr[i] = rand() % 100 - 50; 
-		cout << arr[i] << " ";
-	}
-	cout << endl;
+void saveToCSV(const string& filename, double times[][10],
+    int rows, int cols, bool withAverage)
+{
+    ofstream save(filename);
+    for (int r = 0; r < rows; r++)
+    {
+        double sum = 0.0;
+        for (int c = 0; c < cols; c++)
+        {
+            save << times[r][c] << ";";
+            sum += times[r][c];
+        }
+        if (withAverage)
+            save << sum / cols;   
+        save << "\n";
+    }
+    save.close();
 }
 
-void chiska(int* arr, int n, int& chet, int& otric){
-	chet = 0;
-	otric = 0;
+void runSmallSeries()
+{
+    const int N = 101;
+    const int E = 10;
+    double times[N][E];
 
-	for (int i = 0; i < n; i++){
-		if (arr[i] < 0) {
-			otric += arr[i];
-		}
-		if ((i + 1) % 2 == 0){
-			chet += arr[i];
-		}
-	}
+    cout << "=== Серия 1: n = 1..100 ===\n";
+
+    for (int n = 1; n <= 100; n++)
+    {
+        for (int e = 0; e < E; e++)
+        {
+            int* arr = new int[n];
+            generateArray(arr, n);
+
+            if (n <= 10)
+            {
+                cout << "Массив n = " << n << ": ";
+                printArray(arr, n);
+            }
+
+            auto startTime = chrono::high_resolution_clock::now();
+            long long S1, S2;
+            solve(arr, n, S1, S2);
+            auto endTime = chrono::high_resolution_clock::now();
+
+            chrono::duration<double> elapsed = endTime - startTime;
+            times[n][e] = elapsed.count();
+
+            if (n <= 10)
+            {
+                cout << "n = " << n << ", эксп. " << e + 1
+                    << ": S1 = " << S1 << ", S2 = " << S2
+                    << ", время = " << fixed << setprecision(9)
+                    << times[n][e] << " с\n";
+            }
+
+            delete[] arr;
+        }
+    }
+
+    saveToCSV("times_small.csv", times, 101, E, true);
+    cout << "Сохранено: times_small.csv\n\n";
 }
 
-int main(){
-	setlocale(LC_ALL, "RU");
-	srand(time(NULL));
+void runLargeSeries()
+{
+    const int SIZES = 5;
+    const int E = 10;
+    long long ns[SIZES] = { 1000, 10000, 100000, 1000000, 10000000 };
+    double times[SIZES][E];
 
-	int n = 0;
-	int chet = 0;
-	int otric = 0;
+    cout << "=== Серия 2: большие n ===\n";
 
-	prover(n);
-	
-	int* arr = new int[n];
+    for (int k = 0; k < SIZES; k++)
+    {
+        long long n = ns[k];
+        int attempts = (n <= 100000) ? 10 : 3;
 
-	mass(arr, n);
-	chiska(arr, n, chet, otric);
-	vivod(n, "Введенные данные: ");
+        for (int e = 0; e < attempts; e++)
+        {
+            int* arr = new int[n];
+            generateArray(arr, n);
 
-	vivod(chet, "Сумма четных: ");
-	vivod(otric, "Сумма отрицательных: ");
+            auto startTime = chrono::high_resolution_clock::now();
+            long long S1, S2;
+            solve(arr, n, S1, S2);
+            auto endTime = chrono::high_resolution_clock::now();
 
-	delete[] arr;
+            chrono::duration<double> elapsed = endTime - startTime;
+            times[k][e] = elapsed.count();
 
-	_getch();
-	return 0;
+            cout << "n = " << n << ", эксп. " << e + 1
+                << ": S1 = " << S1 << ", S2 = " << S2
+                << ", время = " << fixed << setprecision(9)
+                << times[k][e] << " с\n";
+
+            delete[] arr;
+        }
+        for (int e = attempts; e < E; e++)
+            times[k][e] = 0.0;
+    }
+
+    saveToCSV("times_large.csv", times, SIZES, E, true);
+    cout << "Сохранено: times_large.csv\n\n";
+}
+
+void demoClock()
+{
+    cout << "=== Демонстрация clock() ===\n";
+    int n = 100;
+    int* arr = new int[n];
+    generateArray(arr, n);
+
+    clock_t tStart = clock();
+    long long S1, S2;
+    solve(arr, n, S1, S2);
+    clock_t tEnd = clock();
+
+    double ticks = (double)(tEnd - tStart);
+    double time2 = ticks / CLOCKS_PER_SEC;
+
+    cout << "n = " << n << "\n";
+    cout << "S1 = " << S1 << ", S2 = " << S2 << "\n";
+    cout << "Такты: " << ticks << ", время: " << time2 << " с\n\n";
+
+    delete[] arr;
+}
+
+void demoSleep()
+{
+    cout << "=== Демонстрация sleep_for ===\n";
+    cout << "Сообщение до цикла с паузой\n";
+    int n = 10;
+    for (int i = 0; i < n; i++)
+        this_thread::sleep_for(chrono::milliseconds(5));
+    cout << "Сообщение после цикла с паузой\n\n";
+}
+
+int main()
+{
+    setlocale(LC_ALL, "RU");
+    srand((unsigned)time(0));
+
+    char cwd[1024];
+    if (_getcwd(cwd, sizeof(cwd)) != nullptr)
+        cout << "Рабочая директория: " << cwd << "\n\n";
+
+    runSmallSeries();   
+    runLargeSeries();   
+    demoClock();        
+    demoSleep();       
+
+    cout << "Выполнение программы завершено!\n";
+    return 0;
 }
