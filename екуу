@@ -1,7 +1,6 @@
 #include<iostream>
 #include<string>
 #include<locale>
-#include<conio.h>
 #include<cmath>
 
 using namespace std;
@@ -20,21 +19,32 @@ void prover(example& x, string s) {
 
 class triangle {
 private:
+    int id;
 	double side, height;
 public:
 	triangle() {
 		side = 0;
-		height = 0;
+		height = 0; // иницилизир начальное состояние объекта
+		id = 0;
 	}
-	triangle(double s, double h) {
+	triangle(double s, double h, int i) {
 		side = s;
 		height = h;
-
+		id = i; 
 	}
+	
 	void setRazm() {
 		prover(side, "Введите размер стороны: ");
 		prover(height, "Введите размер высоты: ");
 	}
+	
+    void setId(int new_id) {
+        id = new_id;
+    }
+
+    int getId() {
+        return id;
+    }
 
 	double poiskPlosh() {
 		return ((side * side) * sqrt(3)) / 4;
@@ -45,7 +55,7 @@ public:
 	}
 
 	void printRazm() {
-		cout << "Длина стороны: " << side << "\nДлина высоты: " << height << "\nПлощадь основания: " << poiskPlosh() << "\nОбъем: " << poiskObem() << endl;
+		cout << "ID пирамиды: " << id << "\nДлина стороны: " << side << "\nДлина высоты: " << height << "\nПлощадь основания: " << poiskPlosh() << "\nОбъем: " << poiskObem() << endl;
 	}
 
 };
@@ -54,16 +64,11 @@ triangle* chitaem(int& size) {
 	prover(size, "Введите число пирамид: ");
 	triangle* pyramids = new triangle[size];
 	for (int i = 0; i < size; i++) {
-		pyramids[i].setRazm();
-	}
+        pyramids[i].setRazm(); 
+        pyramids[i].setId(i + 1); 
+    }
 	return pyramids;
 }
-
-void vivod(triangle pyramid, int nomer, string status) {
-	cout << "\nПирамида №" << nomer << " имеет " << status << ":\n";
-	pyramid.printRazm();
-}
-
 
 void chtoBolshe(triangle* pyramids, int size) {
 	int maxPlosh = 0;
@@ -77,39 +82,20 @@ void chtoBolshe(triangle* pyramids, int size) {
 		}
 	}
 	 
-	bool ploshEqual = false;
-	for (int i = 0; i < size; i++) {
-		if (i != maxPlosh && pyramids[i].poiskPlosh() == pyramids[maxPlosh].poiskPlosh()) {
-			ploshEqual = true;
-			break;
-		}
-	}
-
-	bool obemEqual = false;
-	for (int i = 0; i < size; i++) {
-		if (i != maxObem && pyramids[i].poiskObem() == pyramids[maxObem].poiskObem()) {
-			obemEqual = true;
-			break;
-		}
-	}
-
-	if (ploshEqual) {
-		cout << "\nНесколько пирамид имеют максимальную площадь основания, равную "
-			<< pyramids[maxPlosh].poiskPlosh() << "\n";
-	}
-	else {
-		vivod(pyramids[maxPlosh], maxPlosh + 1, "максимальную площадь основания");
-	}
-
-	if (obemEqual) {
-		cout << "\nНесколько пирамид имеют максимальный объем, равный "
-			<< pyramids[maxObem].poiskObem() << "\n";
-	}
-	else {
-		vivod(pyramids[maxObem], maxObem + 1, "максимальный объем");
-	}
+    cout << "Пирамида с максимальной площадью основания: " << pyramids[maxPlosh].poiskPlosh() << "\nID: ";
+    for (int i = 0; i < size; i++){
+        if (pyramids[i].poiskPlosh() == pyramids[maxPlosh].poiskPlosh()){
+            cout << pyramids[i].getId() << " ";
+        }
+    }
+    cout << endl;
+    cout << "Пирамида с максимальным объемом: " << pyramids[maxObem].poiskObem() << "\nID: ";
+    for (int i = 0; i < size; i++){
+        if (pyramids[i].poiskObem() == pyramids[maxObem].poiskObem()){
+            cout << pyramids[i].getId() << " ";
+        }
+    }
 }
-
 int main() {
 	setlocale(LC_ALL, "RU");
 
@@ -119,7 +105,6 @@ int main() {
 	chtoBolshe(pyramids, size);
 
 	delete[] pyramids;
-
-	_getch();
+    pyramids = nullptr;
 	return 0;
 }
